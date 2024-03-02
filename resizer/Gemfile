@@ -1,0 +1,10 @@
+# frozen_string_literal: true
+ruby '3.2.2'
+
+source "https://rubygems.org"
+
+git_source(:github) { |repo_name| "https://github.com/#{repo_name}" }
+
+# gem "open-uri", "~> 0.3.0"
+gem "mini_magick", "~> 4.12"
+gem "aws-sdk-s3", "~> 1.132"
