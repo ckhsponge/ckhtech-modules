@@ -44,3 +44,6 @@ terragrunt
 
 # mac
 .DS_Store
+
+sinworld/.bundle
+sinworld/app/vendor

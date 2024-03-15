@@ -1,13 +1,16 @@
+require 'rack'
+require 'rack/contrib'
 
 require "#{File.dirname(__FILE__)}/application"
 
+# require_relative './app'
+
+require 'rack/contrib/post_body_content_type_parser'
+
 use Rack::JSONBodyParser
 
-# run Sinatra::Application
-# map( "/sessions" ) { run SessionsController }
-# map( "/pages" ) { run PagesController }
-# map( "/imager" ) { run ImagesController }
-# map( "/users" ) { run UsersController }
-# map( "/payments" ) { run PaymentsController }
-# map( "/tests" ) { run TestsController }
-map( "/" ) { run RootController }
+set :root, File.dirname(__FILE__)
+# set :views, Proc.new { File.join(root, "views") }
+
+run Sinatra::Application
+
