@@ -1,0 +1,9 @@
+ruby '3.2.2'
+
+source 'https://rubygems.org'
+
+gem 'rack', '~> 2.2.4'
+gem 'rack-contrib', '~> 2.3.0'
+gem 'sinatra', '~> 3.0.2'
+gem 'sinatra-contrib', '~> 3.0.2'
+gem "haml", "~> 4.0.3"
