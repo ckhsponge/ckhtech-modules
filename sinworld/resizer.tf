@@ -4,7 +4,7 @@ module resizer {
   source = "../resizer"
   aws_region = var.aws_region
   service = var.service
-  host_name = length(var.host_name_resizer) > 0 ? var.host_name_resizer : "resizer.${var.domain_root}"
+  host_name = length(var.host_name_resizer) > 0 ? var.host_name_resizer : "resizer.${var.domain_base}"
   files_bucket = module.files_bucket[0].bucket_name
   create_cloudfront = false
   original_directory = var.resizer_original_directory

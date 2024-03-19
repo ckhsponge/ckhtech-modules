@@ -1,10 +1,9 @@
-
 data "aws_route53_zone" "main" {
-  name         = local.domain_name
+  name = compact([var.route53_domain_name, local.domain_base])[0]
 }
 
 data aws_acm_certificate main {
-  domain = compact([var.certificate_domain_name,local.domain_name])[0]
+  domain = compact([var.certificate_domain_name, local.domain_base])[0]
 }
 
 resource "aws_apigatewayv2_domain_name" "main" {

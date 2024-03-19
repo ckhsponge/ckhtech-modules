@@ -1,4 +1,11 @@
+resource "random_string" "session_secret" {
+  length  = 64
+  special = false
+  numeric = true
+}
+
 locals {
+  # connect all the applicable services to the lambda environment
   lamda_environment_variables = merge(
     var.environment_variables,
     {
@@ -13,13 +20,13 @@ locals {
       RESIZER_SOURCE_DIRECTORY      = module.resizer[0].source_directory
       RESIZER_DESTINATION_DIRECTORY = module.resizer[0].destination_directory
     } : {},
-        length(module.dynamodb) > 0 ? {
-          GSI_STRING_COUNT = module.dynamodb[0].global_secondary_indexes_string_count
-          GSI_NUMBER_COUNT = module.dynamodb[0].global_secondary_indexes_number_count
-          DYNAMODB_TABLE_NAME = module.dynamodb[0].table_name
-          DYNAMODB_REGION = module.dynamodb[0].aws_region
-          DYNAMODB_TYPE_INDEX_NAME = local.dynamodb_type_index_name
-        } : {}
+    length(module.dynamodb) > 0 ? {
+      GSI_STRING_COUNT         = module.dynamodb[0].global_secondary_indexes_string_count
+      GSI_NUMBER_COUNT         = module.dynamodb[0].global_secondary_indexes_number_count
+      DYNAMODB_TABLE_NAME      = module.dynamodb[0].table_name
+      DYNAMODB_REGION          = module.dynamodb[0].aws_region
+      DYNAMODB_TYPE_INDEX_NAME = local.dynamodb_type_index_name
+    } : {}
   )
   additional_lambda_policy_arns = concat(
     var.additional_lambda_policy_arns,
@@ -34,11 +41,13 @@ module sinatra {
     module.certificate,
     #    local_file.asset_manifest
   ]
-  source                = "../sinatra"
-  aws_region            = var.aws_region
-  service               = var.service
-  host_name             = var.host_name
-  environment_variables = local.lamda_environment_variables
+  source                  = "../sinatra"
+  aws_region              = var.aws_region
+  service                 = var.service
+  host_name               = var.host_name
+  certificate_domain_name = local.domain_certificate
+  route53_domain_name     = var.domain_route53_zone
+  environment_variables   = local.lamda_environment_variables
   #  additional_lambda_policy_json = data.aws_iam_policy_document.static.json
 
   lambda_filename  = data.archive_file.lambda_file.output_path

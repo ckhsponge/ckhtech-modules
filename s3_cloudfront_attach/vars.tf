@@ -17,5 +17,9 @@ variable "cloudfront_distribution_arn" {
 }
 
 variable encrypt_bucket {
+  default = true
+}
+
+variable encrypt_with_custom_kms {
   default = false
 }

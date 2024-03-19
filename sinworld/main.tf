@@ -1,20 +1,6 @@
-resource "aws_codecommit_repository" "main" {
-  count = var.create_codecommit_repository ? 1 : 0
-  repository_name = var.service
-  description     = "${var.service} and associated resources"
-}
 
-module certificate {
-  count = var.create_certificate ? 1 : 0
-  source = "../certificate"
-  domain_name = var.domain_root
-}
 
-resource "random_string" "session_secret" {
-  length = 64
-  special = false
-  numeric = true
-}
+
 
 locals {
   from_email_address = var.email_address_from
@@ -32,9 +18,8 @@ locals {
 #
 #  aws_region = var.aws_region
 #  service = var.service
-#  host_name = var.domain_root
-#  additional_host_names = var.redirect_host_names
-#  redirect_to_host = var.host_name_primary
+#  redirect_host_names = var.redirect_host_names
+#  redirect_to_host = var.host_name
 #}
 #
 #module email {
@@ -42,7 +27,7 @@ locals {
 #  source = "../../modules/email"
 #  aws_region = var.aws_region
 #  service = var.service
-#  domain = var.domain_root
+#  domain = var.domain_base
 #  email_sender = local.from_email_address
 #  email_recipient = var.email_address_forward
 #  sns_enabled = true

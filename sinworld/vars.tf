@@ -8,13 +8,17 @@ variable create_static_bucket { default = true }
 variable create_files_bucket { default = true }
 variable create_files_resizer { default = true }
 
-variable domain_root {
+variable domain_base {
   default = ""
-  description = "the base domain name e.g. myspace.com"
+  description = "the base domain name e.g. staging.myspace.com"
 }
-variable certificate_domain {
+variable domain_certificate {
   default = ""
-  description = "optional - not needed if the same as domain_root"
+  description = "domain name used for certificate, uses domain_base if not specified"
+}
+variable domain_route53_zone {
+  default = ""
+  description = "domain name used for route53 zone, uses domain_base if not specified"
 }
 variable email_address_from {
   default = ""
@@ -26,9 +30,6 @@ variable email_address_forward {
 }
 variable redirect_host_names {
   default = []
-}
-variable host_name_primary {
-  default = ""
 }
 variable host_name_resizer {
   default = ""
@@ -60,5 +61,5 @@ variable resizer_destination_directory {
 }
 
 variable encrypt_buckets {
-  default = false
+  default = true
 }
