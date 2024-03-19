@@ -8,5 +8,5 @@ module cloudfront_redirect {
   redirect_host_names = var.redirect_host_names
   host_name = var.host_name
   certificate_domain_name = local.domain_certificate
-  route53_domain_name = var.domain_route53_zone
+  route53_domain_name = local.domain_route53_zone
 }
