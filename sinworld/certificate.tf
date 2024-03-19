@@ -1,5 +1,5 @@
 locals {
-  domain_certificate = length(var.domain_certificate) > 0 ? var.domain_certificate : var.domain_base
+  domain_certificate = compact([var.domain_certificate,var.domain_base])[0]
 }
 
 module certificate {
