@@ -30,6 +30,7 @@ variable email_address_forward {
 }
 variable redirect_host_names {
   default = []
+  type = list
 }
 variable host_name_resizer {
   default = ""
