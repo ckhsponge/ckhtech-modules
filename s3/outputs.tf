@@ -19,10 +19,10 @@ output "bucket_regional_domain_name" {
 #  value = length(aws_kms_key.main) > 0 ? aws_kms_key.main[0].arn : var.kms_key_arn
 #}
 #
-#output writer_policy_arn {
-#  value = length(aws_iam_policy.writer) > 0 ? aws_iam_policy.writer[0].arn : ""
-#}
-#
-#output reader_policy_arn {
-#  value = length(aws_iam_policy.reader) > 0 ? aws_iam_policy.reader[0].arn : ""
-#}
+output writer_policy_arn {
+  value = length(aws_iam_policy.writer) > 0 ? aws_iam_policy.writer[0].arn : ""
+}
+
+output reader_policy_arn {
+  value = length(aws_iam_policy.reader) > 0 ? aws_iam_policy.reader[0].arn : ""
+}

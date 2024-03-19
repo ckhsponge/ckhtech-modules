@@ -18,6 +18,10 @@ output host_name {
   value = var.host_name
 }
 
+output static_s3_origin_path_root {
+  value = var.static_s3_origin_path_root
+}
+
 #output aws_cloudfront_origin_access_identity_iam_arn {
 #  value = aws_cloudfront_origin_access_identity.main.iam_arn
 #}

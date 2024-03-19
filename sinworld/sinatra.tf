@@ -13,17 +13,18 @@ locals {
       RESIZER_SOURCE_DIRECTORY      = module.resizer[0].source_directory
       RESIZER_DESTINATION_DIRECTORY = module.resizer[0].destination_directory
     } : {},
-    #    length(module.database) > 0 ? {
-    #      GSI_STRING_COUNT = module.database[0].global_secondary_indexes_string_count
-    #      GSI_NUMBER_COUNT = module.database[0].global_secondary_indexes_number_count
-    #      DYNAMODB_TABLE_NAME = module.database[0].table_name
-    #      DYNAMODB_REGION = module.database[0].aws_region
-    #    } : {}
+        length(module.dynamodb) > 0 ? {
+          GSI_STRING_COUNT = module.dynamodb[0].global_secondary_indexes_string_count
+          GSI_NUMBER_COUNT = module.dynamodb[0].global_secondary_indexes_number_count
+          DYNAMODB_TABLE_NAME = module.dynamodb[0].table_name
+          DYNAMODB_REGION = module.dynamodb[0].aws_region
+          DYNAMODB_TYPE_INDEX_NAME = local.dynamodb_type_index_name
+        } : {}
   )
   additional_lambda_policy_arns = concat(
     var.additional_lambda_policy_arns,
     length(module.files_bucket) > 0 ? [module.files_bucket[0].writer_policy_arn] : [],
-    #    length(module.database) > 0 ? [module.database[0].writer_policy_arn] : [],
+    length(module.dynamodb) > 0 ? [module.dynamodb[0].writer_policy_arn] : [],
     #    length(module.email) > 0 ? [module.email[0].sender_policy_arn] : []
   )
 }

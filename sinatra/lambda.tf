@@ -19,6 +19,10 @@ resource "aws_lambda_function" "sinatra" {
   }
 
   memory_size = 1024
+
+  lifecycle {
+    ignore_changes = [source_code_hash]
+  }
 }
 
 resource "aws_cloudwatch_log_group" "sinatra" {
