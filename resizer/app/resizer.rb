@@ -38,7 +38,9 @@ class Resizer
       return {'statusCode' => 400, 'statusDescription' => "Invalid Size"} unless size
       directory = path.sub(/\/[^\/]*$/,'').sub(/^\//,'') # e.g. files/images/abcd-efgh
       return {'statusCode' => 400, 'statusDescription' => "Invalid source directory"} unless directory.start_with?(DESTINATION_DIRECTORY)
-      uuid = directory.sub(/^.*\//,'') # e.g. abcd-efgh
+      # puts "ENV['DESTINATION_DIRECTORY'] #{ENV['DESTINATION_DIRECTORY']}"
+      uuid = directory.sub("#{ENV['DESTINATION_DIRECTORY']}/",'') # e.g. optional-directory/abcd-efgh
+      # puts "uuid #{uuid}"
       desired_format = path.split('.').last
       return {'statusCode' => 400, 'statusDescription' => "Invalid output format"} unless OUTPUT_FORMATS.include?(desired_format)
 

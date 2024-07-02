@@ -1,17 +1,17 @@
 output "aws_cloudfront_distribution_arn" {
-  value = "${aws_cloudfront_distribution.main.arn}"
+  value = aws_cloudfront_distribution.main.arn
 }
 
 output "aws_cloudfront_distribution_id" {
-  value = "${aws_cloudfront_distribution.main.id}"
+  value = aws_cloudfront_distribution.main.id
 }
 
 output "aws_cloudfront_distribution_domain_name" {
-  value = "${aws_cloudfront_distribution.main.domain_name}"
+  value = aws_cloudfront_distribution.main.domain_name
 }
 
 output "aws_cloudfront_distribution_aliases" {
-  value = "${aws_cloudfront_distribution.main.aliases}"
+  value = aws_cloudfront_distribution.main.aliases
 }
 
 output host_name {

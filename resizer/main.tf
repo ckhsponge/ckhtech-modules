@@ -13,7 +13,7 @@ locals {
 locals {
   domain_split = split(".",var.host_name)
   domain_split_length = length(local.domain_split)
-  domain_name = local.domain_split_length > 1 ? "${local.domain_split[local.domain_split_length - 2]}.${local.domain_split[local.domain_split_length - 1]}" : ""
+  domain_name = local.domain_split_length > 1 ? join(".",slice(local.domain_split, 1, local.domain_split_length)) : ""
   certificate_domain = length(var.certificate_domain_name) > 0 ? var.certificate_domain_name : local.domain_name
 }
 

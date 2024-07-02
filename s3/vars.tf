@@ -19,3 +19,11 @@ variable create_writer_policy {
 variable create_reader_policy {
   default = false
 }
+
+variable cors_enabled {
+  default = false
+}
+
+variable cors_domains {
+  default = []
+}

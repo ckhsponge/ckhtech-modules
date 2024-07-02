@@ -3,14 +3,14 @@ output codecommit_repository_clone_url_ssh {
 }
 
 output url {
-  value = "https://${var.host_name}"
+  value = "https://${coalesce([var.host_name_primary, var.host_name]...)}"
 }
 
-output zip_command {
+output publish_zip_command {
   value = "cd app && zip -r ../app.zip *"
 }
 
-output publish_command {
+output publish_update_command {
   value = "aws lambda update-function-code --function-name ${module.sinatra.lambda_function_name} --publish --zip-file fileb://app.zip"
 }
 
@@ -35,3 +35,11 @@ output put_public_command {
 #}
 #
 #
+
+output route53_zone_name_servers {
+  value = length(aws_route53_zone.main) > 0 ? join("\n",aws_route53_zone.main[0].name_servers) : ""
+}
+
+output task_invoke_commands {
+  value = join("/n",module.sinatra.task_invoke_commands)
+}

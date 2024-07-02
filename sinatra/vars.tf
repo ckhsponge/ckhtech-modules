@@ -57,3 +57,18 @@ variable certificate_domain_name {
   default = ""
   description = "needed if certificate is different from root of host name"
 }
+variable sinatra_handler {
+  default = "sinatra_handler.SinatraHandler.handler"
+}
+variable lambda_memory_size {
+  default = 1024
+}
+variable "lambda_runtime" {
+  default = "ruby3.2"
+}
+variable task_handler_base {
+  default = "task_handler.TaskHandler"
+}
+variable task_names {
+  default = []
+}

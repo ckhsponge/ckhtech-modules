@@ -2,6 +2,10 @@ variable aws_region {
   type = string
 }
 
+variable environment {
+  type = string
+}
+
 variable service {
   default = ""
 }
@@ -32,4 +36,8 @@ variable global_secondary_indexes_string_count {
 
 variable global_secondary_indexes_number_count {
   default = 5
+}
+
+variable deletion_protection {
+  default = true
 }

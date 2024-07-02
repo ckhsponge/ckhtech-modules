@@ -6,13 +6,9 @@ module dynamodb {
   count = var.create_dynamodb ? 1 : 0
   source = "../dynamodb"
   aws_region = var.aws_region
+  environment = var.environment
   service = var.service
 
-  additional_global_secondary_indexes = [{
-    name = local.dynamodb_type_index_name
-    hash_key = "type"
-    hash_key_type = "S"
-    range_key = "created_at"
-    range_key_type = "N"
-  }]
+  additional_global_secondary_indexes = var.dynamodb_additional_global_secondary_indexes
+  deletion_protection = var.dynamodb_deletion_protection
 }

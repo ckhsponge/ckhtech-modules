@@ -17,3 +17,11 @@ output lambda_function_name {
 output static_s3_origin_path_root {
   value = module.cloudfront.static_s3_origin_path_root
 }
+
+locals {
+  task_function_names = [for t in aws_lambda_function.task : t.function_name]
+}
+
+output task_invoke_commands {
+  value = formatlist( "aws lambda invoke --function-name %s --payload '{ \"type\": \"generate\", \"limit\": 1 }' --cli-binary-format raw-in-base64-out --invocation-type Event /dev/null", local.task_function_names)
+}

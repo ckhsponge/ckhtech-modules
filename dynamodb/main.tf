@@ -1,5 +1,5 @@
 locals {
-  table_name = "${var.service}.${var.name}"
+  table_name = "${var.service}.${var.name}.${var.environment}"
   additional_attributes = length(var.additional_global_secondary_indexes) == 0 ? [] : flatten(
     [for g in var.additional_global_secondary_indexes : [
       {
@@ -8,7 +8,7 @@ locals {
       }, {
         name = g.range_key
         type = g.range_key_type
-        }
+      }
     ]]
   )
 
@@ -56,6 +56,8 @@ resource aws_dynamodb_table main {
   billing_mode = "PAY_PER_REQUEST"
   stream_enabled = length(var.replica_regions) > 0
   stream_view_type = "NEW_AND_OLD_IMAGES"
+
+  deletion_protection_enabled = var.deletion_protection
 
   dynamic attribute {
     for_each = local.attributes

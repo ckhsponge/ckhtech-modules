@@ -13,7 +13,7 @@ variable "bucket_arn" {
 }
 
 variable "cloudfront_distribution_arn" {
-  default = ""
+  type = string
 }
 
 variable encrypt_bucket {

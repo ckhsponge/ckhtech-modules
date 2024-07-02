@@ -12,7 +12,8 @@ data aws_s3_bucket files {
 
 resource "aws_s3_bucket_policy" "main" {
   depends_on = [aws_s3_bucket.files]
-  count = var.create_bucket_policy ? 1 : 0
+  # bucket policy isn't needed if there is no cloudfront
+  count = var.create_bucket_policy && var.create_cloudfront ? 1 : 0
   bucket = var.files_bucket
   policy = data.aws_iam_policy_document.s3_policy.json
 }

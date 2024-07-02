@@ -7,8 +7,8 @@ locals {
 resource "aws_lambda_function" "sinatra" {
   function_name = local.canonical_name
 
-  runtime = "ruby3.2"
-  handler = "sinatra_handler.SinatraHandler.handler"
+  runtime = var.lambda_runtime
+  handler = var.sinatra_handler
 
   filename = var.lambda_filename
   source_code_hash = var.source_code_hash

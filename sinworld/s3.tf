@@ -1,5 +1,6 @@
 locals {
-  bucket_prefix = join("-",reverse(split(".",var.host_name)))
+  bucket_prefix_terms = [for s in reverse(split(".",var.host_name)) : s if s != "*"]
+  bucket_prefix = join("-",local.bucket_prefix_terms)
 #  public_bucket_name = "${var.service}-public-${local.bucket_suffix}"
 #  files_bucket_name = "${var.service}-files-${local.bucket_suffix}"
   #  private_bucket_regional_domain_name = "${local.private_bucket_name}.s3.amazonaws.com"
@@ -27,9 +28,12 @@ module files_bucket {
 
   bucket_name = "${local.bucket_prefix}-files"
   create_writer_policy = true
+  cors_enabled = true
+  cors_domains = ["https://*.${var.domain_base}", "https://${var.domain_base}"]
 }
 
 module files_bucket_encryption {
+  depends_on = [module.sinatra]
   count = length(module.files_bucket)
   source = "../s3_cloudfront_attach"
   bucket_name = module.files_bucket[count.index].bucket_name

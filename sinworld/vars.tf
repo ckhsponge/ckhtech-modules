@@ -1,5 +1,10 @@
 variable "aws_region" { type = string }
+variable "environment" {
+  type = string
+  description = "e.g. staging or production"
+}
 
+variable create_route53_zone { default = true }
 variable create_codecommit_repository { default = true }
 variable create_certificate { default = true }
 variable create_email_server { default = true }
@@ -38,10 +43,23 @@ variable host_name_resizer {
 
 variable service { type = string } # name of this service
 #variable name { default = "main" }
-variable host_name { type = string } # app.mydomain.org
+variable host_name {
+  type = string
+  description = "app.mydomain.org or *.mydomain.org"
+}
+variable host_name_primary {
+  default = ""
+  description = "defaults to host_name if blank, needed by redirector if host_name has wildcard"
+}
 #variable host_name_resizer { default = "" } # resizer.mydomain.org
-variable environment_name { default = "production" }
-variable environment_variables { default = {} }
+variable sinatra_environment {
+  default = ""
+  description = "e.g. production, uses environment if blank"
+}
+variable environment_variables {
+  type = map(string)
+  default = {}
+}
 variable additional_lambda_policy_arns{ default = [] }
 #variable import_certificate_arn { default = "" }
 
@@ -62,5 +80,17 @@ variable resizer_destination_directory {
 }
 
 variable encrypt_buckets {
+  default = true
+}
+variable task_names {
+  type = list(string)
+  default = []
+}
+variable dynamodb_additional_global_secondary_indexes {
+  type = list(map(string))
+  default = []
+}
+
+variable dynamodb_deletion_protection {
   default = true
 }

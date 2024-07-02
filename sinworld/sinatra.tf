@@ -5,12 +5,14 @@ resource "random_string" "session_secret" {
 }
 
 locals {
+  app_env = coalesce([var.sinatra_environment, var.environment]...)
+  rack_env = local.app_env
   # connect all the applicable services to the lambda environment
   lamda_environment_variables = merge(
     var.environment_variables,
     {
-      APP_ENV        = var.environment_name,
-      RACK_ENV       = var.environment_name
+      APP_ENV        = local.app_env
+      RACK_ENV       = local.rack_env
       SESSION_SECRET = random_string.session_secret.result
     },
     length(local.from_email_address) > 0 ? { FROM_EMAIL_ADDRESS = local.from_email_address } : {},
@@ -63,4 +65,5 @@ module sinatra {
   failover_lambda_invoke_domain_name = length(module.resizer) > 0 ? module.resizer[0].lambda_invoke_domain_name : ""
 
   additional_lambda_policy_arns = local.additional_lambda_policy_arns
+  task_names = var.task_names
 }

@@ -4,6 +4,7 @@ locals {
 }
 
 module certificate {
+  depends_on = [aws_route53_zone.main]
   count = var.create_certificate ? 1 : 0
   source = "../certificate"
   domain_name = local.domain_certificate
