@@ -5,8 +5,8 @@ resource "random_string" "session_secret" {
 }
 
 locals {
-  app_env = coalesce([var.sinatra_environment, var.environment]...)
-  rack_env = local.app_env
+  app_env                     = coalesce([var.sinatra_environment, var.environment]...)
+  rack_env                    = local.app_env
   # connect all the applicable services to the lambda environment
   lamda_environment_variables = merge(
     var.environment_variables,
@@ -15,12 +15,16 @@ locals {
       RACK_ENV       = local.rack_env
       SESSION_SECRET = random_string.session_secret.result
     },
-    length(local.from_email_address) > 0 ? { FROM_EMAIL_ADDRESS = local.from_email_address } : {},
     length(module.files_bucket) > 0 ? { FILES_BUCKET = module.files_bucket[0].bucket_name } : {},
     length(module.resizer) > 0 ? {
       RESIZER_ORIGINAL_DIRECTORY    = module.resizer[0].original_directory
       RESIZER_SOURCE_DIRECTORY      = module.resizer[0].source_directory
       RESIZER_DESTINATION_DIRECTORY = module.resizer[0].destination_directory
+    } : {},
+    length(local.email_address_from) > 0 ? {
+      EMAIL_ADDRESS_FROM   = local.email_address_from
+      EMAIL_ADDRESS_SENDER = local.email_address_sender
+      EMAIL_ADDRESS_DOMAIN = local.email_address_domain
     } : {},
     length(module.dynamodb) > 0 ? {
       GSI_STRING_COUNT         = module.dynamodb[0].global_secondary_indexes_string_count
@@ -34,7 +38,7 @@ locals {
     var.additional_lambda_policy_arns,
     length(module.files_bucket) > 0 ? [module.files_bucket[0].writer_policy_arn] : [],
     length(module.dynamodb) > 0 ? [module.dynamodb[0].writer_policy_arn] : [],
-    #    length(module.email) > 0 ? [module.email[0].sender_policy_arn] : []
+    length(module.email) > 0 ? [module.email[0].sender_policy_arn] : []
   )
 }
 
@@ -65,5 +69,5 @@ module sinatra {
   failover_lambda_invoke_domain_name = length(module.resizer) > 0 ? module.resizer[0].lambda_invoke_domain_name : ""
 
   additional_lambda_policy_arns = local.additional_lambda_policy_arns
-  task_names = var.task_names
+  task_names                    = var.task_names
 }

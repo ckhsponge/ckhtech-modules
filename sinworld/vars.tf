@@ -25,9 +25,13 @@ variable domain_route53_zone {
   default = ""
   description = "domain name used for route53 zone, uses domain_base if not specified"
 }
-variable email_address_from {
+variable email_address_domain {
   default = ""
-  description = "emails are sent from this address"
+  description = "emails are sent and received from this address"
+}
+variable email_address_sender {
+  default = ""
+  description = "emails are sent from this address, should NOT include @domain"
 }
 variable email_address_forward {
   default = ""
@@ -41,8 +45,14 @@ variable host_name_resizer {
   default = ""
 }
 
-variable service { type = string } # name of this service
-#variable name { default = "main" }
+variable service {
+  type = string
+  description = "name of this service"
+}
+variable namespace {
+  default = ""
+  description = "used when global naming is required e.g. for buckets, defaults to service if not present, hyphen delineated, no dots allowed, do not include environment"
+}
 variable host_name {
   type = string
   description = "app.mydomain.org or *.mydomain.org"

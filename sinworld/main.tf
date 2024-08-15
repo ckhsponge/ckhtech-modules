@@ -3,7 +3,7 @@
 
 
 locals {
-  from_email_address = var.email_address_from
+  namespace = coalesce(var.namespace, var.service)
 }
 
 #resource local_file asset_manifest {

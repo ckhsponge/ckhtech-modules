@@ -43,3 +43,13 @@ output route53_zone_name_servers {
 output task_invoke_commands {
   value = join("/n",module.sinatra.task_invoke_commands)
 }
+
+output email {
+#  sensitive = true
+  value = length(module.email) == 0 ? {} : {
+    from = module.email[0].from
+    smtp_username = module.email[0].smtp_username
+    smtp_password = nonsensitive(module.email[0].smtp_password)
+    smtp_endpoint = module.email[0].smtp_endpoint
+  }
+}

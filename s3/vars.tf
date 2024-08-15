@@ -4,8 +4,20 @@ variable "aws_region" {
   default = ""
 }
 
-variable "bucket_name" {
+variable "identifier" {
   default = ""
+}
+
+variable "namespace" {
+  default = ""
+}
+
+variable "environment" {
+  default = ""
+}
+
+variable namespace_first {
+  default = false
 }
 
 variable "versioning_enabled" {

@@ -1,10 +1,16 @@
+locals {
+  bucket_name = join("-",
+    var.namespace_first ? compact([var.namespace, var.environment, var.identifier]) :
+    compact([var.identifier, var.namespace, var.environment])
+  )
+}
 
 resource "aws_s3_bucket" "main" {
-  bucket = var.bucket_name
+  bucket = local.bucket_name
 }
 
 resource "aws_s3_bucket_versioning" "main" {
-  count = var.versioning_enabled ? 1 : 0
+  count  = var.versioning_enabled ? 1 : 0
   bucket = aws_s3_bucket.main.id
 
   versioning_configuration {
@@ -13,7 +19,7 @@ resource "aws_s3_bucket_versioning" "main" {
 }
 
 resource "aws_s3_bucket_cors_configuration" "main" {
-  count = var.cors_enabled ? 1 : 0
+  count  = var.cors_enabled ? 1 : 0
   bucket = aws_s3_bucket.main.bucket
 
   cors_rule {
