@@ -8,6 +8,7 @@ locals {
 module email {
   source = "../email"
   count = var.create_email_server ? 1 : 0
+  depends_on = [aws_route53_zone.main]
 
   aws_region = var.aws_region
   environment = var.environment
