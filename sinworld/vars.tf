@@ -4,14 +4,18 @@ variable "environment" {
   description = "e.g. staging or production"
 }
 
-variable create_route53_zone { default = true }
-variable create_codecommit_repository { default = true }
-variable create_certificate { default = true }
-variable create_email_server { default = true }
-variable create_dynamodb { default = true }
-variable create_static_bucket { default = true }
-variable create_files_bucket { default = true }
-variable create_files_resizer { default = true }
+variable create_route53_zone { default = false }
+variable create_codecommit_repository { default = false }
+variable create_certificate { default = false }
+variable create_email_server { default = false }
+variable create_dynamodb { default = false }
+variable create_static_bucket { default = false }
+variable create_files_bucket { default = false }
+variable create_files_resizer { default = false }
+variable create_files_resizer_cloudfront {
+  default = true
+  description = "if creating a files_resizer, create it in it's own Cloudfront. Otherwise, attach it to the Sinatra Cloudfront."
+}
 
 variable domain_base {
   default = ""
@@ -103,4 +107,9 @@ variable dynamodb_additional_global_secondary_indexes {
 
 variable dynamodb_deletion_protection {
   default = true
+}
+
+variable files_bucket_public_path {
+  default = ""
+  description = "set this to 'files' or another path to expose that directory publicly through cloudfront"
 }

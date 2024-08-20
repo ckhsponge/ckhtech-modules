@@ -52,7 +52,7 @@ locals {
 resource aws_dynamodb_table main {
   name = local.table_name
   hash_key = var.hash_key
-#  range_key = var.range_key
+  range_key = var.range_key
   billing_mode = "PAY_PER_REQUEST"
   stream_enabled = length(var.replica_regions) > 0
   stream_view_type = "NEW_AND_OLD_IMAGES"

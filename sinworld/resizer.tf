@@ -8,7 +8,7 @@ module resizer {
   host_name = coalesce([var.host_name_resizer,"resizer.${var.domain_base}"]...)
   files_bucket = module.files_bucket[0].bucket_name
   create_files_bucket = false # it's already been created (hopefully)
-  create_cloudfront = false
+  create_cloudfront = var.create_files_resizer_cloudfront
   original_directory = var.resizer_original_directory
   source_directory = var.resizer_source_directory
   destination_directory = var.resizer_destination_directory

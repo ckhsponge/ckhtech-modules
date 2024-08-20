@@ -37,6 +37,9 @@ variable files_bucket_name {
 variable files_bucket_regional_domain_name {
   default = ""
 }
+variable files_bucket_public_path {
+  default = ""
+}
 variable has_files_failover {
   default = false
 }

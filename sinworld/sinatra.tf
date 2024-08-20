@@ -40,6 +40,10 @@ locals {
     length(module.dynamodb) > 0 ? [module.dynamodb[0].writer_policy_arn] : [],
     length(module.email) > 0 ? [module.email[0].sender_policy_arn] : []
   )
+
+  sinatra_expose_files   = var.create_files_bucket && length(var.files_bucket_public_path) > 0
+  # should a resizer be attached to the Sinatra Cloudfront
+  sinatra_attach_resizer = local.sinatra_expose_files && length(module.resizer) > 0 && var.create_files_resizer && !var.create_files_resizer_cloudfront
 }
 
 module sinatra {
@@ -62,11 +66,12 @@ module sinatra {
   has_static_bucket                  = var.create_static_bucket
   static_bucket_regional_domain_name = length(module.static_bucket) > 0 ? module.static_bucket[0].bucket_regional_domain_name : ""
   static_paths                       = var.static_paths
-  has_files_bucket                   = var.create_files_bucket
-  files_bucket_regional_domain_name  = length(module.files_bucket) > 0 ? module.files_bucket[0].bucket_regional_domain_name : ""
-  files_bucket_name                  = length(module.files_bucket) > 0 ? module.files_bucket[0].bucket_name : ""
-  has_files_failover                 = var.create_files_resizer
-  failover_lambda_invoke_domain_name = length(module.resizer) > 0 ? module.resizer[0].lambda_invoke_domain_name : ""
+  has_files_bucket                   = local.sinatra_expose_files
+  files_bucket_regional_domain_name  = local.sinatra_expose_files ? module.files_bucket[0].bucket_regional_domain_name : ""
+  files_bucket_name                  = local.sinatra_expose_files ? module.files_bucket[0].bucket_name : ""
+  files_bucket_public_path           = var.files_bucket_public_path
+  has_files_failover                 = local.sinatra_attach_resizer
+  failover_lambda_invoke_domain_name = local.sinatra_attach_resizer ? module.resizer[0].lambda_invoke_domain_name : ""
 
   additional_lambda_policy_arns = local.additional_lambda_policy_arns
   task_names                    = var.task_names
