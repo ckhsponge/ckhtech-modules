@@ -12,8 +12,9 @@ variable "bucket_arn" {
   default = ""
 }
 
-variable "cloudfront_distribution_arn" {
-  type = string
+variable "cloudfront_distribution_arns" {
+  default = []
+  type = list(string)
 }
 
 variable encrypt_bucket {

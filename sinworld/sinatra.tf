@@ -21,6 +21,9 @@ locals {
       RESIZER_SOURCE_DIRECTORY      = module.resizer[0].source_directory
       RESIZER_DESTINATION_DIRECTORY = module.resizer[0].destination_directory
     } : {},
+    var.create_files_resizer_cloudfront && length(module.resizer) > 0 ? {
+      RESIZER_DOMAIN = module.resizer[0].host_name
+    } : {},
     length(local.email_address_from) > 0 ? {
       EMAIL_ADDRESS_FROM   = local.email_address_from
       EMAIL_ADDRESS_SENDER = local.email_address_sender

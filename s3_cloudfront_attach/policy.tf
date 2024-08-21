@@ -10,66 +10,55 @@ data "aws_iam_policy_document" "bucket_key_policy" {
     actions = ["kms:*"]
     resources = ["*"]
   }
-  statement {
+  dynamic statement {
+    for_each = var.cloudfront_distribution_arns
+    content {
 
-    principals {
-      type        = "AWS"
-      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
-    }
-    principals {
-      type        = "Service"
-      identifiers = ["cloudfront.amazonaws.com"]
-    }
+      principals {
+        type        = "AWS"
+        identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
+      }
+      principals {
+        type        = "Service"
+        identifiers = ["cloudfront.amazonaws.com"]
+      }
 
-    actions = [
-      "kms:Decrypt",
-      "kms:Encrypt",
-      "kms:GenerateDataKey*"
-    ]
-    resources = ["*"]
-    condition {
-      test     = "StringEquals"
-      values   = [var.cloudfront_distribution_arn]
-      variable = "AWS:SourceArn"
+      actions = [
+        "kms:Decrypt",
+        "kms:Encrypt",
+        "kms:GenerateDataKey*"
+      ]
+      resources = ["*"]
+      condition {
+        test     = "StringEquals"
+        values   = [statement.value]
+        variable = "AWS:SourceArn"
+      }
     }
   }
-
 }
 
-
 data "aws_iam_policy_document" "s3_policy" {
-  statement {
-    actions   = [
-      "s3:GetObject",
-      "s3:GetObjectTagging",
-    ]
-    resources = ["${var.bucket_arn}/*"]
+  dynamic statement {
+    for_each = var.cloudfront_distribution_arns
+    content {
+      actions = [
+        "s3:GetObject",
+        "s3:GetObjectTagging",
+        "s3:ListBucket"
+      ]
+      resources = ["${var.bucket_arn}/*", var.bucket_arn]
 
-    principals {
-      identifiers = ["cloudfront.amazonaws.com"]
-      type        = "Service"
-    }
+      principals {
+        identifiers = ["cloudfront.amazonaws.com"]
+        type        = "Service"
+      }
 
-    condition {
-      test     = "StringEquals"
-      values   = [var.cloudfront_distribution_arn]
-      variable = "AWS:SourceArn"
-    }
-  }
-
-  statement {
-    actions   = ["s3:ListBucket"]
-    resources = [var.bucket_arn]
-
-    principals {
-      identifiers = ["cloudfront.amazonaws.com"]
-      type        = "Service"
-    }
-
-    condition {
-      test     = "StringEquals"
-      values   = [var.cloudfront_distribution_arn]
-      variable = "AWS:SourceArn"
+      condition {
+        test     = "StringEquals"
+        values   = [statement.value]
+        variable = "AWS:SourceArn"
+      }
     }
   }
 }
