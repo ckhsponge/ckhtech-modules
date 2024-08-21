@@ -16,6 +16,10 @@ resource "aws_lambda_function" "task" {
   }
 
   memory_size = var.lambda_memory_size
+
+  lifecycle {
+    ignore_changes = [source_code_hash] # update code using CLI or other method
+  }
 }
 
 resource "aws_cloudwatch_log_group" "task" {
