@@ -7,7 +7,7 @@ module dynamodb {
   source = "../dynamodb"
   aws_region = var.aws_region
   environment = var.environment
-  service = var.service
+  namespace = var.service
 
   additional_global_secondary_indexes = var.dynamodb_additional_global_secondary_indexes
   deletion_protection = var.dynamodb_deletion_protection

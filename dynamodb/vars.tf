@@ -6,7 +6,7 @@ variable environment {
   type = string
 }
 
-variable service {
+variable namespace {
   default = ""
 }
 

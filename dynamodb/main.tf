@@ -1,5 +1,8 @@
 locals {
-  table_name = "${var.service}.${var.name}.${var.environment}"
+#   table_name = "${var.service}.${var.name}.${var.environment}" # v2.0
+  table_name_namespace = replace(var.namespace, "-", "_")
+  table_name_without_namespace = replace("${var.name}_${var.environment}", "-", "_")
+  table_name = "${local.table_name_namespace}_${local.table_name_without_namespace}"
   additional_attributes = length(var.additional_global_secondary_indexes) == 0 ? [] : flatten(
     [for g in var.additional_global_secondary_indexes : [
       {
