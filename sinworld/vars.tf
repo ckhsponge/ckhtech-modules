@@ -16,6 +16,7 @@ variable create_files_resizer_cloudfront {
   default = true
   description = "if creating a files_resizer, create it in it's own Cloudfront. Otherwise, attach it to the Sinatra Cloudfront."
 }
+variable create_deployment_pipeline { default = false }
 
 variable domain_base {
   default = ""
@@ -112,4 +113,9 @@ variable dynamodb_deletion_protection {
 variable files_bucket_public_path {
   default = ""
   description = "set this to 'files' or another path to expose that directory publicly through cloudfront"
+}
+
+variable deployment_s3_access_principals {
+  default = []
+  type = list(string)
 }

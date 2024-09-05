@@ -1,0 +1,56 @@
+locals {
+  buildspec_node = <<-EOF
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      node: 20
+  build:
+    commands:
+      - pwd
+      - ls -l
+      - node --version
+      - npm --version
+      - npm install -g npm@latest
+      - node --version
+      - npm --version
+      - npm install
+      - npm run build
+artifacts:
+  base-directory: $CODEBUILD_SRC_DIR/build/
+  files:
+    - '**/*'
+EOF
+}
+
+
+
+resource "aws_codebuild_project" "node" {
+  count = 1
+  name          = "${local.canonical_name}-node"
+  build_timeout = 5
+
+  source {
+    type      = "NO_SOURCE"
+    buildspec = local.buildspec_node
+  }
+
+  environment {
+    compute_type = "BUILD_LAMBDA_1GB"
+    image        = "aws/codebuild/amazonlinux-x86_64-lambda-standard:nodejs20"
+    type         = "LINUX_LAMBDA_CONTAINER"
+    environment_variable {
+      name  = "AWS_REGION"
+      value = var.aws_region
+    }
+  }
+
+  service_role = aws_iam_role.codebuild_role.arn
+
+  artifacts {
+    location = module.codepipline_bucket.bucket_name
+    type     = "S3"
+  }
+
+}

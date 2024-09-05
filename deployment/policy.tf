@@ -1,0 +1,94 @@
+
+resource "aws_iam_role" "codepipeline_role" {
+  name = "${local.canonical_name}-codepipeline-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Service = "codepipeline.amazonaws.com"
+        }
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy" "codepipeline_policy" {
+  name = "${local.canonical_name}-codepipeline-policy"
+  role = aws_iam_role.codepipeline_role.name
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:*",
+          "codebuild:*",
+          "codedeploy:*",
+          "cloudwatch:*",
+          "iam:PassRole"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role" "codebuild_role" {
+  name = "codebuild-role"
+
+  assume_role_policy = data.aws_iam_policy_document.codebuild_assume_role.json
+
+  inline_policy {
+    name = "codebuild-policy"
+    policy = data.aws_iam_policy_document.codebuild_policy.json
+  }
+}
+
+data "aws_iam_policy_document" "codebuild_assume_role" {
+  statement {
+    actions = [
+      "sts:AssumeRole"
+    ]
+    effect = "Allow"
+    principals {
+      type = "Service"
+      identifiers = ["codebuild.amazonaws.com"]
+    }
+  }
+}
+
+data aws_caller_identity main {}
+
+data aws_s3_bucket static {
+  bucket = var.static_bucket_name
+}
+
+locals {
+  codebuild_access_bucket = concat(
+    [module.codepipline_bucket.bucket_arn, "${module.codepipline_bucket.bucket_arn}/*"],
+    length(module.input_bucket) > 0 ? [module.input_bucket[0].bucket_arn, "${module.input_bucket[0].bucket_arn}/*"] : [],
+    length(var.static_bucket_name) > 0 ? [data.aws_s3_bucket.static.arn, "${data.aws_s3_bucket.static.arn}/*"] : [],
+  )
+}
+
+data "aws_iam_policy_document" "codebuild_policy" {
+  statement {
+    actions = ["logs:*"]
+    resources = ["*"]
+  }
+  statement {
+    actions = ["s3:List*", "s3:Get*", "s3:Put*", "s3:DeleteObject" ]
+    resources = local.codebuild_access_bucket
+  }
+  statement {
+    actions = [
+      "lambda:UpdateFunctionCode",
+    ]
+    resources = [data.aws_lambda_function.main.arn]
+  }
+}
