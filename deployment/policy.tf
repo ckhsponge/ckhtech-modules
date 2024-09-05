@@ -1,4 +1,19 @@
 
+data aws_caller_identity main {}
+
+data aws_s3_bucket static {
+  bucket = var.static_bucket_name
+}
+
+locals {
+  # the IAM resource definitions that codebuild or codepipeline could ever need access to
+  bucket_iam_resources = concat(
+    [module.codepipline_bucket.bucket_arn, "${module.codepipline_bucket.bucket_arn}/*"],
+      length(module.input_bucket) > 0 ? [module.input_bucket[0].bucket_arn, "${module.input_bucket[0].bucket_arn}/*"] : [],
+      length(var.static_bucket_name) > 0 ? [data.aws_s3_bucket.static.arn, "${data.aws_s3_bucket.static.arn}/*"] : [],
+  )
+}
+
 resource "aws_iam_role" "codepipeline_role" {
   name = "${local.canonical_name}-codepipeline-role"
 
@@ -20,22 +35,26 @@ resource "aws_iam_role_policy" "codepipeline_policy" {
   name = "${local.canonical_name}-codepipeline-policy"
   role = aws_iam_role.codepipeline_role.name
 
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          "s3:*",
-          "codebuild:*",
-          "codedeploy:*",
-          "cloudwatch:*",
-          "iam:PassRole"
-        ]
-        Resource = "*"
-      }
+  policy = data.aws_iam_policy_document.codepipeline_policy.json
+}
+
+data "aws_iam_policy_document" "codepipeline_policy" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "codebuild:*",
+      "codedeploy:*",
+      "cloudwatch:*",
+      "logs:*",
+      "iam:PassRole"
     ]
-  })
+    resources = ["*"]
+  }
+  statement {
+    effect = "Allow"
+    actions = ["s3:List*", "s3:Get*", "s3:Put*", "s3:DeleteObject" ]
+    resources = local.bucket_iam_resources
+  }
 }
 
 resource "aws_iam_role" "codebuild_role" {
@@ -62,20 +81,6 @@ data "aws_iam_policy_document" "codebuild_assume_role" {
   }
 }
 
-data aws_caller_identity main {}
-
-data aws_s3_bucket static {
-  bucket = var.static_bucket_name
-}
-
-locals {
-  codebuild_access_bucket = concat(
-    [module.codepipline_bucket.bucket_arn, "${module.codepipline_bucket.bucket_arn}/*"],
-    length(module.input_bucket) > 0 ? [module.input_bucket[0].bucket_arn, "${module.input_bucket[0].bucket_arn}/*"] : [],
-    length(var.static_bucket_name) > 0 ? [data.aws_s3_bucket.static.arn, "${data.aws_s3_bucket.static.arn}/*"] : [],
-  )
-}
-
 data "aws_iam_policy_document" "codebuild_policy" {
   statement {
     actions = ["logs:*"]
@@ -83,7 +88,7 @@ data "aws_iam_policy_document" "codebuild_policy" {
   }
   statement {
     actions = ["s3:List*", "s3:Get*", "s3:Put*", "s3:DeleteObject" ]
-    resources = local.codebuild_access_bucket
+    resources = local.bucket_iam_resources
   }
   statement {
     actions = [

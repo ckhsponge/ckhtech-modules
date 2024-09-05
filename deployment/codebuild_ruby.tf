@@ -1,49 +1,44 @@
 locals {
-  buildspec_ruby = <<-EOF
-version: 0.2
+  buildspec_ruby = {
+    version = "0.2"
 
-phases:
-  install:
-    runtime-versions:
-      ruby: 3.2.2
-    commands:
-      - echo CODEBUILD_SRC_DIR $CODEBUILD_SRC_DIR
-      - gem install bundler
-  pre_build:
-    commands:
-      - pwd
-      - ls -l
-      - bundle config set --local path '${var.directory}/vendor/bundle'
-      - bundle config set --local without development
-  build:
-    commands:
-      - bundle install
-  post_build:
-    commands:
-      - pwd
-      - ls -l
-artifacts:
-  base-directory: $CODEBUILD_SRC_DIR/
-  files:
-    - '**/*'
+    phases = {
+      install = {
+        runtime-versions = {
+          ruby = "3.2.2"
+        }
+      }
+      build = {
+        commands = var.build_commands_ruby
+      }
+      post_build = {
+        commands = ["echo Done"]
+      }
+    }
 
-  secondary-artifacts:
-    ruby:
-      base-directory: $CODEBUILD_SRC_DIR/
-      files:
-        - '**/*'
-      name: source_ruby
-EOF
+    artifacts = {
+      base-directory = "$CODEBUILD_SRC_DIR/"
+      files = ["**/*"]
+
+      secondary-artifacts = {
+        ruby = {
+          base-directory = "$CODEBUILD_SRC_DIR/"
+          files = ["**/*"]
+          name           = "source_ruby"
+        }
+      }
+    }
+  }
 }
 
 resource "aws_codebuild_project" "ruby" {
-  count = 1
+  count         = 1
   name          = "${local.canonical_name}-ruby"
   build_timeout = 5
 
   source {
-    type      = "NO_SOURCE"
-    buildspec = local.buildspec_ruby
+    type = "NO_SOURCE"
+    buildspec = yamlencode(local.buildspec_ruby)
   }
 
   environment {

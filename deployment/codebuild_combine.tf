@@ -1,33 +1,34 @@
 locals {
-  buildspec_combine = <<-EOF
-version: 0.2
+  buildspec_combine = {
+    version = "0.2"
 
-phases:
-  install:
-    runtime-versions:
-      ruby: 3.2.2
-  build:
-    commands:
-      - pwd
-      - ls -l
-  post_build:
-    commands:
-      - pwd
-      - ls -l
-      - ls -l app
-      - ls -l app/vendor
-      - ls -l app/vendor/bundle
-      - ls -l app/vendor/bundle/ruby
-      - echo CODEBUILD_SRC_DIR_source_node $CODEBUILD_SRC_DIR_node_build
-      - ls -l $CODEBUILD_SRC_DIR_node_build
-      - rm -rf app/public/static
-      - mkdir -p app/public
-      - mv $CODEBUILD_SRC_DIR_node_build/static app/public
-      - mv $CODEBUILD_SRC_DIR_node_build/asset-manifest.json app/asset-manifest.json
-      - cd app && zip -r "../app.zip" . -x "public/*" -x "*.git*" && cd ..
-      - aws lambda update-function-code --function-name ${var.lambda_function_name} --zip-file fileb://"app.zip" --no-cli-pager
-      - aws s3 sync app/public/ s3://${var.static_bucket_name}/${var.static_bucket_path} --no-cli-pager
-EOF
+    phases = {
+      install = {
+        runtime-versions = {
+          ruby = "3.2.2"
+        }
+      }
+      build = {
+        # combine node build into public/static
+        # zip files minus public/
+        # update lambda with zip
+        # push public files to bucket
+        # TODO: delete old files in static bucket
+        commands = [
+          "rm -rf app/public/static",
+          "mkdir -p app/public",
+          "mv $CODEBUILD_SRC_DIR_node_build/static app/public",
+          "mv $CODEBUILD_SRC_DIR_node_build/asset-manifest.json app/asset-manifest.json",
+          "cd app && zip -r \"../app.zip\" . -x \"public/*\" -x \"*.git*\" && cd ..",
+          "aws lambda update-function-code --function-name ${var.lambda_function_name} --zip-file fileb://\"app.zip\" --no-cli-pager",
+          "aws s3 sync app/public/ s3://${var.static_bucket_name}/${var.static_bucket_path} --no-cli-pager"
+        ]
+      }
+      post_build = {
+        commands = ["echo Done"]
+      }
+    }
+  }
 }
 
 resource "aws_codebuild_project" "combine" {
@@ -37,7 +38,7 @@ resource "aws_codebuild_project" "combine" {
 
   source {
     type      = "NO_SOURCE"
-    buildspec = local.buildspec_combine
+    buildspec = yamlencode(local.buildspec_combine)
   }
 
   environment {

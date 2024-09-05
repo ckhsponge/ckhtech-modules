@@ -4,7 +4,8 @@ variable "aws_region" {
 variable environment {
   type = string
 }
-variable service { type = string } # name of this service
+variable service { type = string }
+# name of this service
 variable name { default = "main" }
 
 variable "lambda_function_name" {
@@ -12,16 +13,11 @@ variable "lambda_function_name" {
   type        = string
 }
 
-variable directory {
-  description = "Directory to deploy"
-  default     = "app"
-}
-
 variable branch {
   default = "main"
 }
 variable namespace {
- type = string
+  type        = string
   description = "used when global naming is required e.g. for buckets, defaults to service if not present, hyphen delineated, no dots allowed, do not include environment"
 }
 
@@ -36,4 +32,23 @@ variable static_bucket_name {
 
 variable static_bucket_path {
   default = "dist"
+}
+
+variable build_commands_ruby {
+  default = [
+    "gem install bundler",
+    "bundle config set --local path 'app/vendor/bundle'",
+    "bundle config set --local without development",
+    "bundle install"
+  ]
+}
+
+variable build_commands_node {
+  default = [
+    "npm install -g npm@latest",
+    "node --version",
+    "npm --version",
+    "npm install",
+    "npm run build"
+  ]
 }

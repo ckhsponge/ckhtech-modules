@@ -4,6 +4,7 @@ locals {
 
 resource "aws_codepipeline" "main" {
   name     = "${var.service}-${var.environment}-${var.name}"
+  pipeline_type = "V2" # V2 pipelines are billed $0.002/minute, V1 are $1/month
   role_arn = aws_iam_role.codepipeline_role.arn
 
   artifact_store {

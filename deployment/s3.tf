@@ -15,25 +15,27 @@ module codepipline_bucket {
   environment = var.environment
 }
 
-# TODO: convert to just creating a single policy
 resource "aws_s3_bucket_policy" "input_policy" {
-  for_each = toset(var.s3_access_principals)
+  count = length(module.input_bucket)
   bucket = module.input_bucket[0].bucket_name
 
-  policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Effect = "Allow",
-        Action = ["s3:*"],
-        Resource = [
-          module.input_bucket[0].bucket_arn,
-          "${module.input_bucket[0].bucket_arn}/*"
-        ],
-        Principal = {
-          AWS = each.key
-        }
-      }
+  policy = data.aws_iam_policy_document.input_bucket_policy.json
+}
+
+data "aws_iam_policy_document" "input_bucket_policy" {
+  statement {
+    effect = "Allow"
+
+    actions = ["s3:List*", "s3:Get*", "s3:Put*", "s3:DeleteObject" ]
+
+    resources = [
+      module.input_bucket[0].bucket_arn,
+      "${module.input_bucket[0].bucket_arn}/*"
     ]
-  })
+
+    principals {
+      type = "AWS"
+      identifiers = var.s3_access_principals
+    }
+  }
 }

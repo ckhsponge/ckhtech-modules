@@ -1,27 +1,26 @@
 locals {
-  buildspec_node = <<-EOF
-version: 0.2
+  buildspec_node = {
+    version = "0.2"
 
-phases:
-  install:
-    runtime-versions:
-      node: 20
-  build:
-    commands:
-      - pwd
-      - ls -l
-      - node --version
-      - npm --version
-      - npm install -g npm@latest
-      - node --version
-      - npm --version
-      - npm install
-      - npm run build
-artifacts:
-  base-directory: $CODEBUILD_SRC_DIR/build/
-  files:
-    - '**/*'
-EOF
+    phases = {
+      install = {
+        runtime-versions = {
+          node = 20
+        }
+      }
+      build = {
+        commands = var.build_commands_node
+      }
+      post_build = {
+        commands = ["echo Done"]
+      }
+    }
+
+    artifacts = {
+      base-directory = "$CODEBUILD_SRC_DIR/build/"
+      files = ["**/*"]
+    }
+  }
 }
 
 
@@ -33,7 +32,7 @@ resource "aws_codebuild_project" "node" {
 
   source {
     type      = "NO_SOURCE"
-    buildspec = local.buildspec_node
+    buildspec = yamlencode(local.buildspec_node)
   }
 
   environment {
