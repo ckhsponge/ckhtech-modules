@@ -1,6 +1,3 @@
-locals {
-  repository_zip_file = "repository.zip"
-}
 
 resource "aws_codepipeline" "main" {
   name     = "${var.service}-${var.environment}-${var.name}"
@@ -51,7 +48,7 @@ resource "aws_codepipeline" "main" {
 
       configuration = {
         S3Bucket             = module.input_bucket[0].bucket_name
-        S3ObjectKey          = local.repository_zip_file
+        S3ObjectKey          = var.repository_zip_filename
         PollForSourceChanges = false
       }
     }
@@ -139,7 +136,7 @@ resource "aws_cloudwatch_event_rule" "s3_event_rule" {
     "eventName": ["PutObject","CompleteMultipartUpload", "CopyObject"],
     "requestParameters": {
       "bucketName": ["${module.input_bucket[0].bucket_name}"],
-      "key": ["${local.repository_zip_file}"]
+      "key": ["${var.repository_zip_filename}"]
     }
   }
 }

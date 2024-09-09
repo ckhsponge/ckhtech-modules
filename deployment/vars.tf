@@ -52,3 +52,7 @@ variable build_commands_node {
     "npm run build"
   ]
 }
+
+variable repository_zip_filename {
+   default = "repository.zip"
+}

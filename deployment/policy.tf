@@ -1,5 +1,6 @@
 
 data aws_caller_identity main {}
+data "aws_partition" "current" {}
 
 data aws_s3_bucket static {
   bucket = var.static_bucket_name
