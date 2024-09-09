@@ -53,3 +53,7 @@ output email {
     smtp_endpoint = module.email[0].smtp_endpoint
   }
 }
+
+output deployment_input_bucket_name {
+  value = length(module.deployment_pipeline) > 0 ? module.deployment_pipeline[0].input_bucket_name : ""
+}
