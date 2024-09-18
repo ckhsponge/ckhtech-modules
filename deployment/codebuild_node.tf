@@ -36,7 +36,7 @@ resource "aws_codebuild_project" "node" {
   }
 
   environment {
-    compute_type = "BUILD_LAMBDA_1GB"
+    compute_type = "BUILD_LAMBDA_2GB"
     image        = "aws/codebuild/amazonlinux-x86_64-lambda-standard:nodejs20"
     type         = "LINUX_LAMBDA_CONTAINER"
     environment_variable {
