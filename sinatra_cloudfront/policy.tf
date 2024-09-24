@@ -1,11 +1,10 @@
-
 resource "aws_cloudfront_response_headers_policy" main {
   name = "${local.canonical_name}-resizer-headers-policy"
 
   cors_config {
     access_control_allow_credentials = false
     access_control_allow_headers {
-      items = ["Location","Access-Control-Allow-Origin"]
+      items = ["Location", "Access-Control-Allow-Origin"]
     }
     access_control_allow_methods {
       items = local.allowed_methods
@@ -32,10 +31,10 @@ resource "aws_cloudfront_response_headers_policy" main {
     }
 
     strict_transport_security {
-      override                   = true
+      override           = true
       access_control_max_age_sec = 63072000 // 2 years, requirement is >1 year for preload
-      include_subdomains         = true
-      preload                    = var.strict_transport_security_preload
+      include_subdomains = true
+      preload            = var.strict_transport_security_preload
     }
 
     xss_protection {
@@ -58,7 +57,7 @@ resource "aws_cloudfront_cache_policy" "default" {
     headers_config {
       header_behavior = "whitelist"
       headers {
-        items = ["Host","Origin"]
+        items = ["Host", "Origin"]
       }
     }
     query_strings_config {
@@ -82,6 +81,8 @@ resource "aws_cloudfront_cache_policy" "static" {
     query_strings_config {
       query_string_behavior = "none"
     }
+    enable_accept_encoding_brotli = true
+    enable_accept_encoding_gzip   = true
   }
 }
 
@@ -100,6 +101,8 @@ resource "aws_cloudfront_cache_policy" "files" {
     query_strings_config {
       query_string_behavior = "none"
     }
+    enable_accept_encoding_brotli = true
+    enable_accept_encoding_gzip   = true
   }
 }
 
@@ -115,11 +118,13 @@ resource "aws_cloudfront_cache_policy" "function" {
     headers_config {
       header_behavior = "whitelist"
       headers {
-        items = ["Host","Origin"]
+        items = ["Host", "Origin"]
       }
     }
     query_strings_config {
       query_string_behavior = var.forward_query_string ? "all" : "none"
     }
+    enable_accept_encoding_brotli = true
+    enable_accept_encoding_gzip   = true
   }
 }

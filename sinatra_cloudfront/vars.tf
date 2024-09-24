@@ -143,11 +143,11 @@ variable default_ttl_main {
   description = "The ttl used by the default behavior"
 }
 variable default_ttl_static {
-  default = 60
+  default = 2592000 // 30 days
   description = "The ttl used by the static bucket"
 }
 variable default_ttl_files {
-  default = 60
+  default = 2592000 // 30 days
   description = "The ttl used by the files bucket"
 }
 variable default_ttl_function {
@@ -155,7 +155,7 @@ variable default_ttl_function {
   description = "The ttl used by functions"
 }
 variable max_ttl {
-  default = 604800 // week
+  default = 2592000 // 30 days
 }
 variable strict_transport_security_preload {
   default = true
