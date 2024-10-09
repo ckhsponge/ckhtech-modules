@@ -17,6 +17,7 @@ variable create_files_resizer_cloudfront {
   description = "if creating a files_resizer, create it in it's own Cloudfront. Otherwise, attach it to the Sinatra Cloudfront."
 }
 variable create_deployment_pipeline { default = false }
+variable create_job_queue   { default = false }
 
 variable domain_base {
   default = ""
@@ -118,4 +119,9 @@ variable files_bucket_public_path {
 variable deployment_s3_access_principals {
   default = []
   type = list(string)
+}
+
+variable job_queue_task_name {
+  default = "job"
+  description = "this value must exist in task_names, the jobs sqs calls a lambda based on this"
 }

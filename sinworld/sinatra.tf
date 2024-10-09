@@ -33,17 +33,21 @@ locals {
       GSI_STRING_COUNT         = module.dynamodb[0].global_secondary_indexes_string_count
       GSI_NUMBER_COUNT         = module.dynamodb[0].global_secondary_indexes_number_count
       DYNAMODB_NAMESPACE       = module.dynamodb[0].table_name_namespace
-      DYNAMODB_TABLE_NAME      = module.dynamodb[0].table_name_without_namespace
-#       DYNAMODB_TABLE_NAME      = module.dynamodb[0].table_name
+      DYNAMODB_TABLE_NAME = module.dynamodb[0].table_name_without_namespace
+      #       DYNAMODB_TABLE_NAME      = module.dynamodb[0].table_name
       DYNAMODB_REGION          = module.dynamodb[0].aws_region
       DYNAMODB_TYPE_INDEX_NAME = local.dynamodb_type_index_name
+    } : {},
+      length(aws_sqs_queue.job) > 0 ? {
+      JOB_AWS_SQS_URL = aws_sqs_queue.job[0].url
     } : {}
   )
   additional_lambda_policy_arns = concat(
     var.additional_lambda_policy_arns,
       length(module.files_bucket) > 0 ? [module.files_bucket[0].writer_policy_arn] : [],
       length(module.dynamodb) > 0 ? [module.dynamodb[0].writer_policy_arn] : [],
-      length(module.email) > 0 ? [module.email[0].sender_policy_arn] : []
+      length(module.email) > 0 ? [module.email[0].sender_policy_arn] : [],
+      length(aws_iam_policy.job_sqs_policy) > 0 ? [aws_iam_policy.job_sqs_policy[0].arn] : []
   )
 
   sinatra_expose_files = var.create_files_bucket && length(var.files_bucket_public_path) > 0
@@ -69,10 +73,10 @@ module sinatra {
   source_code_hash = data.archive_file.lambda_file.output_base64sha256
 
   has_static_bucket                  = var.create_static_bucket
-  static_bucket_regional_domain_name = length(module.static_bucket) > 0 ? module.static_bucket[0].bucket_regional_domain_name : ""
-  static_paths                       = var.static_paths
-  has_files_bucket                   = local.sinatra_expose_files
-  files_bucket_regional_domain_name  = local.sinatra_expose_files ? module.files_bucket[0].bucket_regional_domain_name : ""
+  static_bucket_regional_domain_name = (length(module.static_bucket) > 0 ? module.static_bucket[0].bucket_regional_domain_name : "")
+  static_paths                      = var.static_paths
+  has_files_bucket                  = local.sinatra_expose_files
+  files_bucket_regional_domain_name = (local.sinatra_expose_files ? module.files_bucket[0].bucket_regional_domain_name : "")
   files_bucket_name                  = local.sinatra_expose_files ? module.files_bucket[0].bucket_name : ""
   files_bucket_public_path           = var.files_bucket_public_path
   has_files_failover                 = local.sinatra_attach_resizer
