@@ -29,3 +29,11 @@ locals {
 output task_invoke_commands {
   value = formatlist( "aws lambda invoke --function-name %s --payload '{ \"type\": \"generate\", \"limit\": 1 }' --cli-binary-format raw-in-base64-out --invocation-type Event /dev/null", local.task_function_names)
 }
+
+output lambda_task_function_names {
+  value = [for t in aws_lambda_function.task : t.function_name]
+}
+
+output lambda_task_function_names_by_task {
+  value = {for k,v in aws_lambda_function.task : k => v.function_name}
+}

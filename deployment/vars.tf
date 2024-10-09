@@ -8,9 +8,9 @@ variable service { type = string }
 # name of this service
 variable name { default = "main" }
 
-variable "lambda_function_name" {
-  description = "The name of the Lambda function"
-  type        = string
+variable "lambda_function_names" {
+  description = "The names of the Lambda functions that get updated"
+  type        = list(string)
 }
 
 variable branch {

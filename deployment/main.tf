@@ -3,5 +3,6 @@ locals {
 }
 
 data aws_lambda_function main {
-  function_name = var.lambda_function_name
+  for_each = toset(var.lambda_function_names)
+  function_name =  each.value
 }

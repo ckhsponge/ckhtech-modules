@@ -95,6 +95,6 @@ data "aws_iam_policy_document" "codebuild_policy" {
     actions = [
       "lambda:UpdateFunctionCode",
     ]
-    resources = [data.aws_lambda_function.main.arn]
+    resources = [for l in data.aws_lambda_function.main : l.arn]
   }
 }
