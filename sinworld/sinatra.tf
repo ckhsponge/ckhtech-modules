@@ -47,7 +47,8 @@ locals {
       length(module.files_bucket) > 0 ? [module.files_bucket[0].writer_policy_arn] : [],
       length(module.dynamodb) > 0 ? [module.dynamodb[0].writer_policy_arn] : [],
       length(module.email) > 0 ? [module.email[0].sender_policy_arn] : [],
-      length(aws_iam_policy.job_sqs_policy) > 0 ? [aws_iam_policy.job_sqs_policy[0].arn] : []
+      length(aws_iam_policy.job_sqs_policy) > 0 ? [aws_iam_policy.job_sqs_policy[0].arn] : [],
+      [aws_iam_policy.cloudwatch_put_metric_data_policy.arn]
   )
 
   sinatra_expose_files = var.create_files_bucket && length(var.files_bucket_public_path) > 0
