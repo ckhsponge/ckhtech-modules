@@ -28,7 +28,7 @@ locals {
 resource "aws_codebuild_project" "node" {
   count = 1
   name          = "${local.canonical_name}-node"
-  build_timeout = 5
+  build_timeout = 20
 
   source {
     type      = "NO_SOURCE"
@@ -36,7 +36,7 @@ resource "aws_codebuild_project" "node" {
   }
 
   environment {
-    compute_type = "BUILD_LAMBDA_2GB"
+    compute_type = "BUILD_LAMBDA_4GB" # 4GB builds 5x faster than 2GB so the double price saves you money!!!
     image        = "aws/codebuild/amazonlinux-x86_64-lambda-standard:nodejs20"
     type         = "LINUX_LAMBDA_CONTAINER"
     environment_variable {

@@ -80,6 +80,7 @@ variable additional_lambda_policy_arns{ default = [] }
 #variable import_certificate_arn { default = "" }
 
 variable static_paths {
+  type = list(string)
   default = ["images","javascripts","stylesheets","static"]
 }
 

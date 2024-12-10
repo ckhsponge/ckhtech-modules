@@ -48,7 +48,7 @@ variable build_commands_node {
     "npm install -g npm@latest",
     "node --version",
     "npm --version",
-    "npm install",
+    "npm install --omit=dev",
     "npm run build"
   ]
 }
