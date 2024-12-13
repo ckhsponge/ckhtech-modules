@@ -7,7 +7,7 @@ resource "aws_apigatewayv2_api" "lambda" {
 resource "aws_apigatewayv2_stage" "lambda" {
   api_id = aws_apigatewayv2_api.lambda.id
 
-  name        = "$default" // could be "staging" for /staging/ routes
+  name = "$default" // could be "staging" for /staging/ routes
   auto_deploy = true
 
   access_log_settings {
@@ -60,12 +60,14 @@ resource "aws_lambda_permission" "api_gw" {
 }
 
 resource "aws_apigatewayv2_api_mapping" "main" {
+  count       = local.cloudfront_count
   api_id      = aws_apigatewayv2_api.lambda.id
-  domain_name = aws_apigatewayv2_domain_name.main.id
+  domain_name = aws_apigatewayv2_domain_name.main[count.index].id
   stage       = aws_apigatewayv2_stage.lambda.id
 }
 
 resource "aws_apigatewayv2_domain_name" "main" {
+  count       = local.cloudfront_count
   domain_name = var.host_name
 
   domain_name_configuration {
