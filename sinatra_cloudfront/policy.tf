@@ -52,7 +52,7 @@ resource "aws_cloudfront_cache_policy" "default" {
   min_ttl     = 0
   parameters_in_cache_key_and_forwarded_to_origin {
     cookies_config {
-      cookie_behavior = var.forward_cookies ? "all" : "none"
+      cookie_behavior = var.cache_cookies ? "all" : "none"
     }
     headers_config {
       header_behavior = "whitelist"
@@ -61,9 +61,32 @@ resource "aws_cloudfront_cache_policy" "default" {
       }
     }
     query_strings_config {
-      query_string_behavior = var.forward_query_string ? "all" : "none"
+      query_string_behavior = var.cache_query_string ? "all" : "none"
+    }
+    enable_accept_encoding_brotli = true
+    enable_accept_encoding_gzip   = true
+  }
+}
+
+
+resource "aws_cloudfront_origin_request_policy" "default" {
+  name = "${local.canonical_name}-default-origin-request-policy"
+
+  cookies_config {
+    cookie_behavior = var.forward_cookies ? "all" : "none"
+  }
+
+  query_strings_config {
+    query_string_behavior = var.forward_query_string ? "all" : "none"
+  }
+
+  headers_config {
+    header_behavior = "whitelist"
+    headers {
+      items = ["Host", "Origin"]
     }
   }
+
 }
 
 resource "aws_cloudfront_cache_policy" "static" {

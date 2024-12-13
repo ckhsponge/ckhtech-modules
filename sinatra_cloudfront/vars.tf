@@ -129,6 +129,12 @@ variable has_files_failover {
 variable files_failover_domain_name {
   default = ""
 }
+variable cache_cookies {
+  default = false
+}
+variable cache_query_string {
+  default = false
+}
 variable forward_cookies {
   default = false
 }
