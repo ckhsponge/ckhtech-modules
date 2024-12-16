@@ -1,4 +1,9 @@
 locals {
+  slack_commands_ruby = length(var.slack_webhook) > 0 ? [
+    templatestring(local.slack_template, {
+      message = "DEPLOY START ${local.canonical_name} *${var.environment}*"
+    })
+  ] : []
   buildspec_ruby = {
     version = "0.2"
 
@@ -9,7 +14,10 @@ locals {
         }
       }
       build = {
-        commands = var.build_commands_ruby
+        commands = concat(
+          local.slack_commands_ruby,
+          var.build_commands_ruby
+        )
       }
       post_build = {
         commands = ["echo Done"]

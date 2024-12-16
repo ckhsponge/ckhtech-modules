@@ -1,4 +1,6 @@
 locals {
+  slack_template         = "curl -X POST -H 'Content-type: application/json' --data '{\"text\":\"$${message}\"}' ${var.slack_webhook}"
+  slack_commands_combine = length(var.slack_webhook) > 0 ? [templatestring(local.slack_template, { message = "DEPLOY COMPLETE ${local.canonical_name} *${var.environment}*" })] : []
   buildspec_combine = {
     version = "0.2"
 
@@ -22,8 +24,12 @@ locals {
             "mv $CODEBUILD_SRC_DIR_node_build/asset-manifest.json app/asset-manifest.json",
             "cd app && zip -r \"../app.zip\" . -x \"public/*\" -x \"*.git*\" && cd .."
           ],
-          [for name in var.lambda_function_names : "aws lambda update-function-code --function-name ${name} --zip-file fileb://\"app.zip\" --no-cli-pager"],
-          ["aws s3 sync app/public/ s3://${var.static_bucket_name}/${var.static_bucket_path} --no-cli-pager"]
+          [
+            for name in var.lambda_function_names :
+            "aws lambda update-function-code --function-name ${name} --zip-file fileb://\"app.zip\" --no-cli-pager"
+          ],
+          ["aws s3 sync app/public/ s3://${var.static_bucket_name}/${var.static_bucket_path} --no-cli-pager"],
+          local.slack_commands_combine
         )
       }
       post_build = {
@@ -34,12 +40,12 @@ locals {
 }
 
 resource "aws_codebuild_project" "combine" {
-  count = 1
+  count         = 1
   name          = "${local.canonical_name}-combine"
   build_timeout = 5
 
   source {
-    type      = "NO_SOURCE"
+    type = "NO_SOURCE"
     buildspec = yamlencode(local.buildspec_combine)
   }
 

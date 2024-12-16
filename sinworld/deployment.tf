@@ -10,4 +10,5 @@ module deployment_pipeline {
   service              = var.service
   namespace            = var.namespace
   static_bucket_name   = length(module.static_bucket) > 0 ? module.static_bucket[0].bucket_name : ""
+  slack_webhook        = var.deployment_slack_webhook
 }
