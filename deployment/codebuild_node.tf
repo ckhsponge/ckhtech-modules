@@ -1,4 +1,14 @@
 locals {
+  build_commands_node = length(var.build_commands_node) > 0 ? var.build_commands_node : [
+    "node --version",
+    "npm --version",
+    "npm install -g npm@${var.npm_version}",
+    "node --version",
+    "npm --version",
+    "npm install --omit=dev",
+    "npm run build"
+  ]
+
   buildspec_node = {
     version = "0.2"
 
@@ -9,7 +19,7 @@ locals {
         }
       }
       build = {
-        commands = var.build_commands_node
+        commands = local.build_commands_node
       }
       post_build = {
         commands = ["echo Done"]

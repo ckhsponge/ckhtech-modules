@@ -43,16 +43,18 @@ variable build_commands_ruby {
   ]
 }
 
+variable npm_version {
+  default = "10.9.2"
+}
+
 variable build_commands_node {
-  default = [
-    "npm install -g npm@latest",
-    "node --version",
-    "npm --version",
-    "npm install --omit=dev",
-    "npm run build"
-  ]
+  default = []
 }
 
 variable repository_zip_filename {
    default = "repository.zip"
+}
+
+variable slack_webhook {
+  default = ""
 }
