@@ -5,7 +5,7 @@ locals {
 }
 
 resource "aws_lambda_function" "sinatra" {
-  function_name = local.canonical_name
+  function_name = local.function_name
 
   runtime = var.lambda_runtime
   handler = var.sinatra_handler
@@ -18,7 +18,7 @@ resource "aws_lambda_function" "sinatra" {
     variables = local.lamda_environment_variables
   }
 
-  memory_size = 1024
+  memory_size = var.lambda_memory_size
 
   lifecycle {
     ignore_changes = [source_code_hash] # update code using CLI or other method

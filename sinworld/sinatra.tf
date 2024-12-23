@@ -70,8 +70,9 @@ module sinatra {
   environment_variables = local.lamda_environment_variables
   #  additional_lambda_policy_json = data.aws_iam_policy_document.static.json
 
-  lambda_filename  = data.archive_file.lambda_file.output_path
-  source_code_hash = data.archive_file.lambda_file.output_base64sha256
+  lambda_filename    = data.archive_file.lambda_file.output_path
+  source_code_hash   = data.archive_file.lambda_file.output_base64sha256
+  lambda_memory_size = var.lambda_memory_size
 
   has_static_bucket                  = var.create_static_bucket
   static_bucket_regional_domain_name = (length(module.static_bucket) > 0 ? module.static_bucket[0].bucket_regional_domain_name : "")

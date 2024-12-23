@@ -8,10 +8,6 @@ variable "bucket_name" {
   default = ""
 }
 
-variable "bucket_arn" {
-  default = ""
-}
-
 variable "cloudfront_distribution_arns" {
   default = []
   type = list(string)

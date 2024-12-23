@@ -76,6 +76,9 @@ variable environment_variables {
   type = map(string)
   default = {}
 }
+variable lambda_memory_size {
+  default = 1024
+}
 variable additional_lambda_policy_arns{ default = [] }
 #variable import_certificate_arn { default = "" }
 

@@ -38,6 +38,10 @@ data "aws_iam_policy_document" "bucket_key_policy" {
   }
 }
 
+locals {
+  bucket_arn = "arn:aws:s3:::${var.bucket_name}"
+}
+
 data "aws_iam_policy_document" "s3_policy" {
   dynamic statement {
     for_each = var.cloudfront_distribution_arns
@@ -47,7 +51,7 @@ data "aws_iam_policy_document" "s3_policy" {
         "s3:GetObjectTagging",
         "s3:ListBucket"
       ]
-      resources = ["${var.bucket_arn}/*", var.bucket_arn]
+      resources = ["${local.bucket_arn}/*", local.bucket_arn]
 
       principals {
         identifiers = ["cloudfront.amazonaws.com"]

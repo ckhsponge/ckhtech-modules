@@ -1,6 +1,11 @@
+locals {
+  task_function_names_map = {for idx, n in var.task_names : n => "${var.service}-${var.name}-task-${n}"}
+  task_function_names = values(local.task_function_names_map) 
+}
+
 resource "aws_lambda_function" "task" {
-  for_each = toset(var.task_names)
-  function_name = "${var.service}-${var.name}-task-${each.key}"
+  for_each = local.task_function_names_map
+  function_name = each.value
 
   runtime = var.lambda_runtime
   handler = "${var.task_handler_base}.${each.key}"

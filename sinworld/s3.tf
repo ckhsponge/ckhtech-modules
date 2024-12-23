@@ -17,7 +17,6 @@ module static_bucket_encryption {
   count                        = length(module.static_bucket)
   source                       = "../s3_cloudfront_attach"
   bucket_name                  = module.static_bucket[count.index].bucket_name
-  bucket_arn                   = module.static_bucket[count.index].bucket_arn
   cloudfront_distribution_arns = [module.sinatra.cloudfront_distribution_arn]
   encrypt_bucket               = var.encrypt_buckets
 }
@@ -35,11 +34,10 @@ module files_bucket {
 }
 
 module files_bucket_encryption {
-  depends_on                   = [module.sinatra]
+  depends_on                   = [module.sinatra.lambda_function_name]
   count                        = length(module.files_bucket)
   source                       = "../s3_cloudfront_attach"
   bucket_name                  = module.files_bucket[count.index].bucket_name
-  bucket_arn                   = module.files_bucket[count.index].bucket_arn
   cloudfront_distribution_arns = compact(concat(
     [module.sinatra.cloudfront_distribution_arn],
     length(module.resizer) > 0 ? [module.resizer[0].cloudfront_distribution_arn] : []
