@@ -34,7 +34,7 @@ data "aws_iam_policy_document" "job_sqs_policy_document" {
     actions = [
       "sqs:SendMessage", "sqs:ReceiveMessage", "sqs:DeleteMessage", "sqs:GetQueueAttributes", "sqs:GetQueueUrl"
     ]
-    resources = [aws_sqs_queue.job[0].arn]
+    resources = [length(aws_sqs_queue.job) > 0 ? aws_sqs_queue.job[0].arn : ""]
     effect = "Allow"
   }
 }
