@@ -61,7 +61,7 @@ variable certificate_domain_name {
   description = "needed if certificate is different from root of host name"
 }
 variable sinatra_handler {
-  default = "sinatra_handler.SinatraHandler.handler"
+  default = "sinatra_handler.SinatraHandler.handle"
 }
 variable lambda_memory_size {
   default = 1024
@@ -69,9 +69,12 @@ variable lambda_memory_size {
 variable "lambda_runtime" {
   default = "ruby3.2"
 }
-variable task_handler_base {
-  default = "task_handler.TaskHandler"
-}
-variable task_names {
+variable task_lambda_functions {
+  type = list(object({
+    function_name=string,
+    handler=string,
+    crons=optional(list(object({rule_name=string, schedule_expression=string, input=string})), [])
+  }))
   default = []
+  description = "additional lambda functions defined by their handler e.g. task_handler.TaskHandler.handle"
 }

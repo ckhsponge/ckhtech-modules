@@ -85,5 +85,5 @@ module sinatra {
   failover_lambda_invoke_domain_name = local.sinatra_attach_resizer ? module.resizer[0].lambda_invoke_domain_name : ""
 
   additional_lambda_policy_arns = local.additional_lambda_policy_arns
-  task_names                    = var.task_names
+  task_lambda_functions = var.task_lambda_functions
 }

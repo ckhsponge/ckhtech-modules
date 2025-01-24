@@ -32,6 +32,6 @@ output lambda_task_function_names {
   value = local.task_function_names # [for t in aws_lambda_function.task : t.function_name]
 }
 
-output lambda_task_function_names_by_task {
-  value = local.task_function_names_map # {for k,v in aws_lambda_function.task : k => v.function_name}
+output lambda_task_function_arns {
+  value = [for f in aws_lambda_function.task : f.arn]
 }

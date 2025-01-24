@@ -102,10 +102,16 @@ variable resizer_destination_directory {
 variable encrypt_buckets {
   default = true
 }
-variable task_names {
-  type = list(string)
+variable task_lambda_functions {
+  type = list(object({
+    function_name=string,
+    handler=string,
+    crons=optional(list(object({rule_name=string, schedule_expression=string, input=string})), [])
+  }))
   default = []
+  description = "additional lambda functions defined by their function_name and handler e.g. task_handler.TaskHandler.handle"
 }
+
 variable dynamodb_additional_global_secondary_indexes {
   type = list(map(string))
   default = []
@@ -125,7 +131,7 @@ variable deployment_s3_access_principals {
   type = list(string)
 }
 
-variable job_queue_task_name {
+variable job_queue_function_name {
   default = "job"
   description = "this value must exist in task_names, the jobs sqs calls a lambda based on this"
 }

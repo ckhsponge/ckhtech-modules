@@ -1,5 +1,5 @@
 locals {
-  job_queue_function_name = module.sinatra.lambda_task_function_names_by_task[var.job_queue_task_name]
+  job_queue_function_name = var.job_queue_function_name #module.sinatra.lambda_task_function_names_by_task[var.job_queue_task_name]
 }
 
 resource "aws_sqs_queue" "job" {
