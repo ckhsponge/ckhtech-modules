@@ -43,11 +43,10 @@ data "aws_iam_policy_document" "codepipeline_policy" {
   statement {
     effect = "Allow"
     actions = [
-      "codebuild:*",
-      "codedeploy:*",
+      "codebuild:*", # TODO: limit to needed resources
+      # "codedeploy:*", # TODO: limit to needed resources
       "cloudwatch:*",
       "logs:*",
-      "iam:PassRole"
     ]
     resources = ["*"]
   }
@@ -55,6 +54,17 @@ data "aws_iam_policy_document" "codepipeline_policy" {
     effect = "Allow"
     actions = ["s3:List*", "s3:Get*", "s3:Put*", "s3:DeleteObject" ]
     resources = local.bucket_iam_resources
+  }
+  dynamic "statement" {
+    for_each = aws_codestarconnections_connection.github
+    content {
+      actions = [
+        "codestar-connections:UseConnection",
+        "codestar-connections:GetConnection",
+        "codestar-connections:ListConnections",
+      ]
+      resources = [statement.value.arn]
+    }
   }
 }
 

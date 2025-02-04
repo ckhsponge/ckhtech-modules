@@ -140,3 +140,13 @@ variable deployment_slack_webhook {
   default = ""
   description = "post deployment updates to this slack webhook"
 }
+
+variable deployment_repository_id {
+  default = ""
+  description = "the id of the repository to use for deployment e.g. ckhsponge/my-repo-name"
+}
+
+variable deployment_branch {
+  default = ""
+  description = "the branch to use for deployment"
+}

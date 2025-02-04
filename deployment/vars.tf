@@ -58,3 +58,15 @@ variable repository_zip_filename {
 variable slack_webhook {
   default = ""
 }
+
+variable detect_changes {
+  default = true
+}
+
+variable github_repository_id {
+  default = ""
+}
+
+variable github_branch {
+  default = ""
+}
