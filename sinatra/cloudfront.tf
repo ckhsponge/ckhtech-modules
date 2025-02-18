@@ -7,6 +7,7 @@ module "cloudfront" {
   origin_domain_name      = replace(replace(aws_apigatewayv2_stage.lambda.invoke_url, "https://", ""), "/", "")
   #aws_apigatewayv2_domain_name.main.domain_name_configuration[0].target_domain_name
   host_name               = var.host_name
+  additional_host_names   = var.additional_host_names
   route53_domain_name     = var.route53_domain_name
   certificate_domain_name = var.certificate_domain_name
   default_ttl_main        = 0

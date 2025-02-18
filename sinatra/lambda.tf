@@ -57,7 +57,7 @@ locals {
 }
 
 resource "aws_iam_role_policy_attachment" "additional" {
-  count = length(local.additional_lambda_policy_arns)
+  for_each = toset(local.additional_lambda_policy_arns)
   role       = aws_iam_role.lambda_exec.name
-  policy_arn = local.additional_lambda_policy_arns[count.index]
+  policy_arn = each.value
 }

@@ -4,6 +4,7 @@ variable "aws_region" {
 variable service { type = string } # name of this service
 variable name { default = "main" }
 variable host_name { type = string } # app.mydomain.org
+variable additional_host_names { default = [] }
 variable host_name_resizer { default = "" } # resizer.mydomain.org
 variable environment_name { default = "production" }
 variable environment_variables { default = {} }

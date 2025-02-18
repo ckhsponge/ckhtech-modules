@@ -60,8 +60,9 @@ resource "aws_lambda_permission" "api_gw" {
 }
 
 resource "aws_apigatewayv2_api_mapping" "main" {
+  for_each = aws_apigatewayv2_domain_name.main
   api_id      = aws_apigatewayv2_api.lambda.id
-  domain_name = aws_apigatewayv2_domain_name.main.id
+  domain_name = each.value.id
   stage       = aws_apigatewayv2_stage.lambda.id
 }
 

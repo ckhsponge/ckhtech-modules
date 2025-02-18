@@ -63,6 +63,10 @@ variable host_name {
   type = string
   description = "app.mydomain.org or *.mydomain.org"
 }
+variable additional_host_names {
+  type = list(string)
+  default = []
+}
 variable host_name_primary {
   default = ""
   description = "defaults to host_name if blank, needed by redirector if host_name has wildcard"
@@ -79,7 +83,10 @@ variable environment_variables {
 variable lambda_memory_size {
   default = 1024
 }
-variable additional_lambda_policy_arns{ default = [] }
+variable additional_lambda_policy_arns{
+  type = list(string)
+  default = []
+}
 #variable import_certificate_arn { default = "" }
 
 variable static_paths {

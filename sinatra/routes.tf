@@ -7,7 +7,8 @@ data aws_acm_certificate main {
 }
 
 resource "aws_apigatewayv2_domain_name" "main" {
-  domain_name = var.host_name
+  for_each = toset(concat([var.host_name],var.additional_host_names))
+  domain_name = each.value
 
   domain_name_configuration {
     certificate_arn = data.aws_acm_certificate.main.arn
@@ -15,3 +16,4 @@ resource "aws_apigatewayv2_domain_name" "main" {
     security_policy = "TLS_1_2"
   }
 }
+

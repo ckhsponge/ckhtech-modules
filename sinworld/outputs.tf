@@ -36,6 +36,10 @@ output put_public_command {
 #
 #
 
+output route53_zone_id {
+  value = length(aws_route53_zone.main) > 0 ? aws_route53_zone.main[0].id : ""
+}
+
 output route53_zone_name_servers {
   value = length(aws_route53_zone.main) > 0 ? join("\n",aws_route53_zone.main[0].name_servers) : ""
 }

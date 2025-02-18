@@ -65,6 +65,7 @@ module sinatra {
   aws_region              = var.aws_region
   service                 = var.service
   host_name               = var.host_name
+  additional_host_names   = var.additional_host_names
   certificate_domain_name = local.domain_certificate
   route53_domain_name     = local.domain_route53_zone
   environment_variables = local.lamda_environment_variables
