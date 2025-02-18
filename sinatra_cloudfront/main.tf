@@ -71,7 +71,7 @@ resource "aws_cloudfront_distribution" "main" {
 
     viewer_protocol_policy = "redirect-to-https"
     compress               = var.compress
-    response_headers_policy_id = aws_cloudfront_response_headers_policy.main.id
+    response_headers_policy_id = aws_cloudfront_response_headers_policy.default.id
     cache_policy_id            = aws_cloudfront_cache_policy.default.id
     origin_request_policy_id = aws_cloudfront_origin_request_policy.default.id
   }

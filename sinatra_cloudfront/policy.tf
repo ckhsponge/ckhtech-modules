@@ -45,6 +45,58 @@ resource "aws_cloudfront_response_headers_policy" main {
   }
 }
 
+resource "aws_cloudfront_response_headers_policy" default {
+  name = "${local.canonical_name}-default-headers-policy"
+
+  cors_config {
+    access_control_allow_credentials = false
+    access_control_allow_headers {
+      items = ["Location", "Access-Control-Allow-Origin"]
+    }
+    access_control_allow_methods {
+      items = local.allowed_methods
+    }
+    access_control_allow_origins {
+      items = var.cors_origins
+    }
+    origin_override = true
+  }
+
+  security_headers_config {
+    content_type_options {
+      override = true
+    }
+
+    frame_options {
+      override     = false
+      frame_option = "SAMEORIGIN"
+    }
+
+    content_security_policy {
+      content_security_policy = "frame-ancestors 'none';"
+      override                = false
+    }
+
+    referrer_policy {
+      override        = true
+      referrer_policy = "same-origin"
+    }
+
+    strict_transport_security {
+      override           = true
+      access_control_max_age_sec = 63072000 // 2 years, requirement is >1 year for preload
+      include_subdomains = true
+      preload            = var.strict_transport_security_preload
+    }
+
+    xss_protection {
+      override   = true
+      mode_block = true
+      protection = true
+    }
+  }
+}
+
 resource "aws_cloudfront_cache_policy" "default" {
   name        = "${local.canonical_name}-default-cache-policy"
   max_ttl     = var.max_ttl
@@ -83,7 +135,7 @@ resource "aws_cloudfront_origin_request_policy" "default" {
   headers_config {
     header_behavior = "whitelist"
     headers {
-      items = ["Host", "Origin"]
+      items = ["Host", "Origin", "Content-Security-Policy", "X-Frame-Options"]
     }
   }
 
