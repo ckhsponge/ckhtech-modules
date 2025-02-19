@@ -36,6 +36,8 @@ variable static_bucket_path {
 
 variable build_commands_ruby {
   default = [
+    "rbenv versions",
+    "ruby -v",
     "gem install bundler",
     "bundle config set --local path 'app/vendor/bundle'",
     "bundle config set --local without development",

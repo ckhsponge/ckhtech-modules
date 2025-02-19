@@ -68,7 +68,7 @@ variable lambda_memory_size {
   default = 1024
 }
 variable "lambda_runtime" {
-  default = "ruby3.2"
+  default = "ruby3.3"
 }
 variable task_lambda_functions {
   type = list(object({

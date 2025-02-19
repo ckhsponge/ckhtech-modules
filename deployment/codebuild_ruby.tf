@@ -9,9 +9,9 @@ locals {
 
     phases = {
       install = {
-        runtime-versions = {
-          ruby = "3.2.2"
-        }
+        # runtime-versions = {
+        #   ruby = "3.3.6" # forces an rbenv install of this version which fails if it already exists :(
+        # }
       }
       build = {
         commands = concat(
@@ -50,9 +50,10 @@ resource "aws_codebuild_project" "ruby" {
   }
 
   environment {
-    compute_type = "BUILD_LAMBDA_1GB"
-    image        = "aws/codebuild/amazonlinux-x86_64-lambda-standard:ruby3.2"
-    type         = "LINUX_LAMBDA_CONTAINER"
+    compute_type = "BUILD_GENERAL1_SMALL"
+    # 5.0 has ruby versions  3.1.6, 3.2.6, 3.3.6, 3.4.1
+    image        = "aws/codebuild/amazonlinux-x86_64-standard:5.0"
+    type         = "LINUX_CONTAINER"
     environment_variable {
       name  = "AWS_REGION"
       value = var.aws_region
