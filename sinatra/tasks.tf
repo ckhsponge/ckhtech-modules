@@ -52,7 +52,7 @@ resource "aws_cloudwatch_event_target" "check_foo_every_five_minutes" {
 
 resource "aws_lambda_permission" "task" {
   for_each = local.task_crons_map
-  statement_id = "AllowExecutionFromCloudWatch"
+  statement_id = "allow-cloudwatch-${each.value.rule_name}"
   action = "lambda:InvokeFunction"
   function_name = each.value.function_name
   principal = "events.amazonaws.com"
