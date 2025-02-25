@@ -27,7 +27,7 @@ locals {
     }
 
     artifacts = {
-      base-directory = "$CODEBUILD_SRC_DIR/build/"
+      base-directory = "$CODEBUILD_SRC_DIR/${var.node_build_directory}/"
       files = ["**/*"]
     }
   }

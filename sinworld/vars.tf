@@ -157,3 +157,11 @@ variable deployment_branch {
   default = ""
   description = "the branch to use for deployment"
 }
+
+variable deployment_node_build_directory {
+  default = "build"
+}
+
+variable deployment_node_asset_manifest_filename {
+  default = "asset-manifest.json"
+}

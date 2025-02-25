@@ -72,3 +72,11 @@ variable github_repository_id {
 variable github_branch {
   default = ""
 }
+
+variable node_build_directory {
+  default = "build"
+}
+
+variable node_asset_manifest_filename {
+  default = "asset-manifest.json"
+}

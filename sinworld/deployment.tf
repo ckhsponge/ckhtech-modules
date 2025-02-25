@@ -15,4 +15,7 @@ module deployment_pipeline {
   namespace             = var.namespace
   static_bucket_name    = length(module.static_bucket) > 0 ? module.static_bucket[0].bucket_name : ""
   slack_webhook         = var.deployment_slack_webhook
+
+  node_asset_manifest_filename = var.deployment_node_asset_manifest_filename
+  node_build_directory         = var.deployment_node_build_directory
 }

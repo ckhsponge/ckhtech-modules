@@ -21,7 +21,7 @@ locals {
             "rm -rf app/public/static",
             "mkdir -p app/public",
             "mv $CODEBUILD_SRC_DIR_node_build/static app/public",
-            "mv $CODEBUILD_SRC_DIR_node_build/asset-manifest.json app/asset-manifest.json",
+            "mv $CODEBUILD_SRC_DIR_node_build/${var.node_asset_manifest_filename} app/${var.node_asset_manifest_filename}",
             "cd app && zip -r \"../app.zip\" . -x \"public/*\" -x \"*.git*\" && cd .."
           ],
           [
