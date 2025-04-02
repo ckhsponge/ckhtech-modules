@@ -54,8 +54,8 @@ resource "aws_ses_domain_identity_verification" "main" {
 }
 
 resource "aws_ses_email_identity" "main" {
-  count = length(var.email_identities)
-  email = "${var.email_identities[count.index]}@${aws_ses_domain_identity.main.domain}"
+  for_each = toset(var.email_identities)
+  email = strcontains(each.key, "@") ? each.key : "${each.key}@${aws_ses_domain_identity.main.domain}"
 }
 
 resource "aws_ses_domain_dkim" "main" {
@@ -76,12 +76,18 @@ resource "aws_ses_configuration_set" "main" {
   reputation_metrics_enabled = true
 }
 
+locals {
+  mx_records = var.inbound_handling_method == "lambda" ? ["inbound-smtp.${var.aws_region}.amazonaws.com"] : var.external_mx_records
+  mx_records_prioritized = [for mx in local.mx_records : "10 ${mx}"]
+}
+
 resource "aws_route53_record" "inbound" {
+  count = var.inbound_handling_method != "none" ? 1 : 0
   zone_id = data.aws_route53_zone.main.id
   name    = var.domain
   type    = "MX"
   ttl     = "600"
-  records = ["10 inbound-smtp.${var.aws_region}.amazonaws.com"]
+  records = local.mx_records_prioritized
 }
 
 resource "aws_ses_email_identity" "recipient" {

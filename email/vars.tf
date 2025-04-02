@@ -33,6 +33,17 @@ variable from {
   default = ""
   description = "this is used in the From: field"
 }
+
+variable inbound_handling_method {
+  default = "lambda"
+  description = "lambda, external or none. If lambda, a lambda is created to forward emails to var.forward_to"
+}
+
+variable external_mx_records {
+  default = ["fwd1.porkbun.com", "fwd2.porkbun.com"]
+  description = "if inbound_handling_method is external then use these mx records"
+}
+
 variable bucket_object_key_prefix {
   default = "inbox"
 }

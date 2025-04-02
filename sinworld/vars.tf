@@ -43,6 +43,19 @@ variable email_address_forward {
   default = ""
   description = "instead of imap, your inbound emails will be forwarded to this address"
 }
+variable email_inbound_method {
+  default = "lambda"
+  description = "lambda, external or none. If lambda, a lambda is created to forward emails to email_address_forward"
+}
+variable email_external_mx_records {
+  default = ["fwd1.porkbun.com", "fwd2.porkbun.com"]
+  description = "if email_inbound_method is external then use these mx records"
+}
+variable email_identities {
+  type = list(string)
+  default = []
+  description = "additional email addresses that we can send from"
+}
 variable redirect_host_names {
   default = []
   type = list

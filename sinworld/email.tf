@@ -17,4 +17,7 @@ module email {
   domain     = var.email_address_domain
   from = local.email_address_from
   forward_to = var.email_address_forward
+  inbound_handling_method = var.email_inbound_method
+  external_mx_records = var.email_external_mx_records
+  email_identities = var.email_identities
 }

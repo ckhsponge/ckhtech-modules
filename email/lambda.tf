@@ -1,5 +1,6 @@
 locals {
   lambda_function_name = "emailForward"
+  lambda_count = var.inbound_handling_method == "lambda" ? 1 : 0
 }
 
 data "aws_iam_policy_document" "lambda_assume_role_policy" {
@@ -14,9 +15,9 @@ data "aws_iam_policy_document" "lambda_assume_role_policy" {
 }
 
 resource "aws_iam_role" "lambda_role" {
+  count = local.lambda_count
   name               = "${local.canonical_name}-email-receive-lambda-role"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_role_policy.json
-  inline_policy {}
 }
 
 data aws_iam_policy_document lambda_policy {
@@ -42,13 +43,15 @@ data aws_iam_policy_document lambda_policy {
 }
 
 resource "aws_iam_policy" "lambda_policy" {
+  count = local.lambda_count
   name   = "${local.canonical_name}-email-receive-lambda-policy"
   policy = data.aws_iam_policy_document.lambda_policy.json
 }
 
 resource "aws_iam_role_policy_attachment" "additional" {
-  role       = aws_iam_role.lambda_role.name
-  policy_arn = aws_iam_policy.lambda_policy.arn
+  count = local.lambda_count
+  role       = aws_iam_role.lambda_role[0].name
+  policy_arn = aws_iam_policy.lambda_policy[0].arn
 }
 
 data "archive_file" "python_lambda_package" {
@@ -58,10 +61,11 @@ data "archive_file" "python_lambda_package" {
 }
 
 resource "aws_lambda_function" "email" {
+  count = local.lambda_count
   function_name    = local.lambda_function_name
   filename         = "src.zip"
   source_code_hash = data.archive_file.python_lambda_package.output_base64sha256
-  role             = aws_iam_role.lambda_role.arn
+  role             = aws_iam_role.lambda_role[0].arn
   runtime          = var.lambda_runtime
   handler          = "lambda_function.lambda_handler"
   timeout          = 10
@@ -78,15 +82,17 @@ resource "aws_lambda_function" "email" {
 }
 
 resource "aws_lambda_permission" "allow_ses" {
+  count = local.lambda_count
   statement_id  = "AllowExecutionFromSES"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.email.function_name
+  function_name = aws_lambda_function.email[0].function_name
   principal     = "ses.amazonaws.com"
   source_arn    = "${aws_ses_receipt_rule_set.main.arn}:receipt-rule/${local.ses_receipt_rule_name_lambda}"
   #  qualifier     = aws_lambda_alias.test_alias.name
 }
 
 resource "aws_ses_receipt_rule" "lambda" {
+  count = local.lambda_count
   name          = local.ses_receipt_rule_name_lambda
   rule_set_name = aws_ses_receipt_rule_set.main.rule_set_name
   #  recipients    = ["karen@example.com"]
@@ -102,6 +108,6 @@ resource "aws_ses_receipt_rule" "lambda" {
 
   lambda_action {
     position     = 1
-    function_arn = aws_lambda_function.email.arn
+    function_arn = aws_lambda_function.email[0].arn
   }
 }
