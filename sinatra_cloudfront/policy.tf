@@ -109,7 +109,7 @@ resource "aws_cloudfront_cache_policy" "default" {
     headers_config {
       header_behavior = "whitelist"
       headers {
-        items = ["Host", "Origin"]
+        items = ["Host", "Origin", "Mirror"]
       }
     }
     query_strings_config {
