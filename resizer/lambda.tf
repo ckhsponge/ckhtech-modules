@@ -19,7 +19,10 @@ resource aws_lambda_function resizer {
       DESTINATION_DIRECTORY = var.destination_directory
       ORIGINAL_FORMATS = jsonencode(var.original_formats)
       OUTPUT_FORMATS = jsonencode(var.output_formats)
-      SIZES_BY_NAME = jsonencode(var.sizes_by_name)
+      SIZES_BY_NAME = jsonencode({
+        // remove nulls
+        for k, v in var.sizes_by_name : k => { for k2, v2 in v : k2 => v2 if v2 != null }
+      })
     }
   }
   layers           = [

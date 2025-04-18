@@ -32,6 +32,7 @@ variable output_formats {
 }
 
 variable sizes_by_name {
+  nullable = false
   default = {
     large = {
       width = 1024

@@ -13,4 +13,5 @@ module resizer {
   original_directory = var.resizer_original_directory
   source_directory = var.resizer_source_directory
   destination_directory = var.resizer_destination_directory
+  sizes_by_name = var.resizer_sizes_by_name
 }

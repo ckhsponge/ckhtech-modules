@@ -178,3 +178,13 @@ variable deployment_node_build_directory {
 variable deployment_node_asset_manifest_filename {
   default = "asset-manifest.json"
 }
+
+variable resizer_sizes_by_name {
+  default = null
+  type = map(object({
+    width  = optional(number)
+    height = optional(number)
+    scale  = optional(bool)
+  }))
+
+}
