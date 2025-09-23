@@ -179,6 +179,10 @@ variable deployment_node_asset_manifest_filename {
   default = "asset-manifest.json"
 }
 
+variable deploy_node {
+  default = true
+}
+
 variable resizer_sizes_by_name {
   default = null
   type = map(object({
@@ -188,3 +192,4 @@ variable resizer_sizes_by_name {
   }))
 
 }
+

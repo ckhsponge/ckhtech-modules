@@ -7,7 +7,7 @@ locals {
     phases = {
       install = {
         runtime-versions = {
-          ruby = "3.2.2"
+          ruby = "3.4.2"
         }
       }
       build = {
@@ -20,8 +20,12 @@ locals {
           [
             "rm -rf app/public/static",
             "mkdir -p app/public",
+          ],
+          length(aws_codebuild_project.node) > 0 ? [
             "mv $CODEBUILD_SRC_DIR_node_build/static app/public",
             "mv $CODEBUILD_SRC_DIR_node_build/${var.node_asset_manifest_filename} app/${var.node_asset_manifest_filename}",
+          ] : [],
+          [
             "cd app && zip -r \"../app.zip\" . -x \"public/*\" -x \"*.git*\" && cd .."
           ],
           [
@@ -51,7 +55,7 @@ resource "aws_codebuild_project" "combine" {
 
   environment {
     compute_type = "BUILD_LAMBDA_1GB"
-    image        = "aws/codebuild/amazonlinux-x86_64-lambda-standard:ruby3.2"
+    image        = "aws/codebuild/amazonlinux-x86_64-lambda-standard:ruby3.4"
     type         = "LINUX_LAMBDA_CONTAINER"
     environment_variable {
       name  = "AWS_REGION"

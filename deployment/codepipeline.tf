@@ -112,7 +112,7 @@ resource "aws_codepipeline" "main" {
         category = "Build"
         owner    = "AWS"
         provider = "CodeBuild"
-        input_artifacts = ["source_ruby", "node_build"]
+        input_artifacts = concat(["source_ruby"], length(aws_codebuild_project.node) > 0 ? ["node_build"] : [])
         version = "1"
         #      run_order = "2"
 

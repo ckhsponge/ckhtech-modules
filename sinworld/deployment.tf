@@ -18,4 +18,5 @@ module deployment_pipeline {
 
   node_asset_manifest_filename = var.deployment_node_asset_manifest_filename
   node_build_directory         = var.deployment_node_build_directory
+  deploy_node                  = var.deploy_node
 }

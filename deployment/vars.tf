@@ -80,3 +80,7 @@ variable node_build_directory {
 variable node_asset_manifest_filename {
   default = "asset-manifest.json"
 }
+
+variable deploy_node {
+  default = true
+}

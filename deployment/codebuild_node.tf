@@ -36,7 +36,7 @@ locals {
 
 
 resource "aws_codebuild_project" "node" {
-  count = 1
+  count = var.deploy_node ? 1 : 0
   name          = "${local.canonical_name}-node"
   build_timeout = 20
 
