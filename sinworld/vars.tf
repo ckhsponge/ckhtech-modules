@@ -8,6 +8,7 @@ variable create_route53_zone { default = false }
 variable create_codecommit_repository { default = false }
 variable create_certificate { default = false }
 variable create_email_server { default = false }
+variable create_dsql { default = false }
 variable create_dynamodb { default = false }
 variable create_static_bucket { default = false }
 variable create_files_bucket { default = false }
@@ -138,6 +139,10 @@ variable dynamodb_additional_global_secondary_indexes {
 }
 
 variable dynamodb_deletion_protection {
+  default = true
+}
+
+variable dsql_deletion_protection {
   default = true
 }
 

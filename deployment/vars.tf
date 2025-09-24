@@ -13,6 +13,10 @@ variable "lambda_function_names" {
   type        = list(string)
 }
 
+variable environment_variables {
+  default = {}
+}
+
 variable branch {
   default = "main"
 }
@@ -39,10 +43,19 @@ variable build_commands_ruby {
     "rbenv versions",
     "ruby -v",
     "gem install bundler",
-    "bundle config set --local path 'app/vendor/bundle'",
+    "cd app",
+    "bundle config set --local deployment true",
+    "bundle config set --local path 'vendor/bundle'",
     "bundle config set --local without development",
-    "bundle install"
+    "bundle install",
+    "bundle list",
+    "bundle info activerecord-dsql-adapter",
+    "cd .."
   ]
+}
+
+variable build_command_migrate {
+  default = "echo 'not migrating'"
 }
 
 variable npm_version {
@@ -83,4 +96,8 @@ variable node_asset_manifest_filename {
 
 variable deploy_node {
   default = true
+}
+
+variable build_policy_arns {
+  default = []
 }

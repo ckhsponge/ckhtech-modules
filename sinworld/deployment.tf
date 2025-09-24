@@ -15,8 +15,13 @@ module deployment_pipeline {
   namespace             = var.namespace
   static_bucket_name    = length(module.static_bucket) > 0 ? module.static_bucket[0].bucket_name : ""
   slack_webhook         = var.deployment_slack_webhook
+  environment_variables = local.lamda_environment_variables
 
   node_asset_manifest_filename = var.deployment_node_asset_manifest_filename
   node_build_directory         = var.deployment_node_build_directory
   deploy_node                  = var.deploy_node
+
+  # DSQL requires migrations and permission to migrate
+  build_command_migrate = length(module.dsql) > 0 ? "cd app && bundle exec rake db:migrate && cd .." : "echo 'not migrating'"
+  build_policy_arns = length(module.dsql) > 0 ? [module.dsql[0].writer_policy_arn] : []
 }

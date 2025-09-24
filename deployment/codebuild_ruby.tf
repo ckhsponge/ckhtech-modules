@@ -16,7 +16,8 @@ locals {
       build = {
         commands = concat(
           local.slack_commands_ruby,
-          var.build_commands_ruby
+          var.build_commands_ruby,
+          [var.build_command_migrate]
         )
       }
       post_build = {
@@ -54,9 +55,13 @@ resource "aws_codebuild_project" "ruby" {
     # 5.0 has ruby versions  3.1.6, 3.2.6, 3.3.6, 3.4.1
     image        = "aws/codebuild/amazonlinux-x86_64-standard:5.0"
     type         = "LINUX_CONTAINER"
-    environment_variable {
-      name  = "AWS_REGION"
-      value = var.aws_region
+    
+    dynamic "environment_variable" {
+      for_each = var.environment_variables
+      content {
+        name  = environment_variable.key
+        value = environment_variable.value
+      }
     }
   }
 
@@ -67,4 +72,9 @@ resource "aws_codebuild_project" "ruby" {
     type     = "S3"
   }
 
+}
+resource "aws_iam_role_policy_attachment" "ruby_build_policies" {
+  for_each   = toset(var.build_policy_arns)
+  role       = aws_iam_role.codebuild_role.name
+  policy_arn = each.value
 }

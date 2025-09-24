@@ -29,6 +29,10 @@ locals {
       EMAIL_ADDRESS_SENDER = local.email_address_sender
       EMAIL_ADDRESS_DOMAIN = local.email_address_domain
     } : {},
+      length(module.dsql) > 0 ? {
+      DATABASE_URL  = module.dsql[0].url
+      DATABASE_HOST = module.dsql[0].host
+    } : {},
       length(module.dynamodb) > 0 ? {
       GSI_STRING_COUNT         = module.dynamodb[0].global_secondary_indexes_string_count
       GSI_NUMBER_COUNT         = module.dynamodb[0].global_secondary_indexes_number_count
@@ -45,6 +49,7 @@ locals {
   additional_lambda_policy_arns = concat(
     var.additional_lambda_policy_arns,
       length(module.files_bucket) > 0 ? [module.files_bucket[0].writer_policy_arn] : [],
+      length(module.dsql) > 0 ? [module.dsql[0].writer_policy_arn] : [],
       length(module.dynamodb) > 0 ? [module.dynamodb[0].writer_policy_arn] : [],
       length(module.email) > 0 ? [module.email[0].sender_policy_arn] : [],
       length(aws_iam_policy.job_sqs_policy) > 0 ? [aws_iam_policy.job_sqs_policy[0].arn] : [],
