@@ -198,3 +198,6 @@ variable resizer_sizes_by_name {
 
 }
 
+variable generate_activerecord_encryption {
+  default = false
+}

@@ -44,6 +44,11 @@ locals {
     } : {},
       length(aws_sqs_queue.job) > 0 ? {
       JOB_AWS_SQS_URL = aws_sqs_queue.job[0].url
+    } : {},
+      length(random_password.activerecord_encryption) > 0 ? {
+      ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY=random_password.activerecord_encryption["primary"].result
+      ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY=random_password.activerecord_encryption["deterministic"].result
+      ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT=random_password.activerecord_encryption["salt"].result
     } : {}
   )
   additional_lambda_policy_arns = concat(
@@ -93,3 +98,10 @@ module sinatra {
   additional_lambda_policy_arns = local.additional_lambda_policy_arns
   task_lambda_functions = var.task_lambda_functions
 }
+
+resource "random_password" "activerecord_encryption" {
+  for_each = var.generate_activerecord_encryption ? toset(["primary", "deterministic", "salt"]) : []
+  length = 32
+  special = false
+}
+
