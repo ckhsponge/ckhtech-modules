@@ -72,11 +72,12 @@ resource "aws_iam_role" "codebuild_role" {
   name = "codebuild-role"
 
   assume_role_policy = data.aws_iam_policy_document.codebuild_assume_role.json
+}
 
-  inline_policy {
-    name = "codebuild-policy"
-    policy = data.aws_iam_policy_document.codebuild_policy.json
-  }
+resource "aws_iam_role_policy" "codebuild_policy" {
+  name = "${local.canonical_name}-codebuild-policy"
+  role = aws_iam_role.codebuild_role.id
+  policy = data.aws_iam_policy_document.codebuild_policy.json
 }
 
 data "aws_iam_policy_document" "codebuild_assume_role" {
