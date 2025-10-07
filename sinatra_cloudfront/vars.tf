@@ -167,3 +167,6 @@ variable strict_transport_security_preload {
   default = true
   description = "domain and subdomain always use https"
 }
+variable additional_headers {
+  default = []
+}

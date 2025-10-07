@@ -79,3 +79,7 @@ variable task_lambda_functions {
   default = []
   description = "additional lambda functions defined by their handler e.g. task_handler.TaskHandler.handle"
 }
+variable cloudfront_additional_headers {
+  description = "Hyphenated headers e.g. X-SLACK-SIGNATURE"
+  default = []
+}

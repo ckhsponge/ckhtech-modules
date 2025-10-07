@@ -109,7 +109,7 @@ resource "aws_cloudfront_cache_policy" "default" {
     headers_config {
       header_behavior = "whitelist"
       headers {
-        items = ["Host", "Origin", "Mirror"]
+        items = concat(["Host", "Origin", "Mirror"], var.additional_headers)
       }
     }
     query_strings_config {
@@ -135,7 +135,7 @@ resource "aws_cloudfront_origin_request_policy" "default" {
   headers_config {
     header_behavior = "whitelist"
     headers {
-      items = ["Host", "Origin", "Content-Security-Policy", "X-Frame-Options"]
+      items = concat(["Host", "Origin", "Content-Security-Policy", "X-Frame-Options"], var.additional_headers)
     }
   }
 

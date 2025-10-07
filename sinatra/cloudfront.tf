@@ -24,4 +24,5 @@ module "cloudfront" {
   files_s3_path_pattern         = var.files_bucket_public_path
   has_files_failover            = var.has_files_failover
   files_failover_domain_name    = var.failover_lambda_invoke_domain_name
+  additional_headers            = var.cloudfront_additional_headers
 }

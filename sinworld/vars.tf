@@ -201,3 +201,8 @@ variable resizer_sizes_by_name {
 variable generate_activerecord_encryption {
   default = false
 }
+variable cloudfront_additional_headers {
+  description = "Hyphenated headers e.g. X-SLACK-SIGNATURE"
+  type = list(string)
+  default = []
+}

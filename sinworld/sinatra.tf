@@ -97,6 +97,7 @@ module sinatra {
 
   additional_lambda_policy_arns = local.additional_lambda_policy_arns
   task_lambda_functions = var.task_lambda_functions
+  cloudfront_additional_headers = var.cloudfront_additional_headers
 }
 
 resource "random_password" "activerecord_encryption" {
