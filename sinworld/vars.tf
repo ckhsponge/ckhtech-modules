@@ -1,5 +1,5 @@
 variable "aws_region" { type = string }
-variable "backup_region" { type = string }
+# variable "aws_region_backup" { type = string }
 variable "environment" {
   type = string
   description = "e.g. staging or production"
@@ -145,6 +145,15 @@ variable dynamodb_deletion_protection {
 
 variable dsql_deletion_protection {
   default = true
+}
+
+variable dsql_backup_retention_days {
+  description = "Set to 0 to disable backup"
+  default = 0
+}
+
+variable dsql_backup_schedule {
+  default = "cron(0 0 * * ? *)" # daily at 00:00 UTC
 }
 
 variable files_bucket_public_path {

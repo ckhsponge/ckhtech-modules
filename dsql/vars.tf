@@ -25,13 +25,11 @@ variable "tags" {
 }
 
 variable backup_schedule {
-  default = "cron(0 2 * * ? *)"
+  default = "cron(0 0 * * ? *)" # daily at 00:00 UTC
 }
 
 variable backup_retention_days {
   default = 0
 }
 
-variable backup_copy_region {
-  type = string
-}
+

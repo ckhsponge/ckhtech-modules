@@ -5,7 +5,7 @@ resource aws_backup_vault main {
 
 resource aws_backup_vault copy {
   count    = var.backup_retention_days > 0 ? 1 : 0
-  provider = aws.backup_region
+  provider = aws.backup
   name     = "dsql-${local.name}-copy"
 }
 
@@ -14,9 +14,10 @@ resource aws_backup_plan main {
   name = "dsql-${local.name}"
 
   rule {
-    rule_name         = "daily"
+    rule_name         = "main"
     target_vault_name = aws_backup_vault.main[0].name
     schedule          = var.backup_schedule
+    enable_continuous_backup = true # not currently used with DSQL :(
 
     lifecycle {
       delete_after = var.backup_retention_days

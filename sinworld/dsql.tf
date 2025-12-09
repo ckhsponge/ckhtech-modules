@@ -4,7 +4,7 @@ module dsql {
   source = "../dsql"
   
   providers = {
-    aws.backup_region = aws.backup
+    aws.backup = aws.backup
   }
   
   aws_region = var.aws_region
@@ -12,5 +12,6 @@ module dsql {
   namespace = var.service
 
   deletion_protection = var.dsql_deletion_protection
-  backup_copy_region = var.backup_region
+  backup_retention_days = var.dsql_backup_retention_days
+  backup_schedule = var.dsql_backup_schedule
 }

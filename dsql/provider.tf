@@ -2,7 +2,7 @@ terraform {
   required_providers {
     aws = {
       source                = "hashicorp/aws"
-      configuration_aliases = [aws.backup_region]
+      configuration_aliases = [aws.backup]
     }
   }
 }
