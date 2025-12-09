@@ -29,3 +29,4 @@ resource aws_iam_policy writer {
   description = "Write to dsql ${local.name}"
   policy      = data.aws_iam_policy_document.writer.json
 }
+

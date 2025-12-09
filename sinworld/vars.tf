@@ -1,4 +1,5 @@
 variable "aws_region" { type = string }
+variable "backup_region" { type = string }
 variable "environment" {
   type = string
   description = "e.g. staging or production"

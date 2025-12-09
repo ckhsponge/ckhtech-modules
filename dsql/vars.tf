@@ -23,3 +23,15 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable backup_schedule {
+  default = "cron(0 2 * * ? *)"
+}
+
+variable backup_retention_days {
+  default = 0
+}
+
+variable backup_copy_region {
+  type = string
+}
