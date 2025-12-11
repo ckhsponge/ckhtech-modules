@@ -30,7 +30,7 @@ locals {
       EMAIL_ADDRESS_DOMAIN = local.email_address_domain
     } : {},
       length(module.dsql) > 0 ? {
-      DATABASE_URL  = module.dsql[0].url
+      # DATABASE_URL  = module.dsql[0].url # omitting this is better for ActiveRecord
       DATABASE_HOST = module.dsql[0].host
     } : {},
       length(module.dynamodb) > 0 ? {
