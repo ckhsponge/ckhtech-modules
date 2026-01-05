@@ -153,7 +153,7 @@ variable default_ttl_static {
   description = "The ttl used by the static bucket"
 }
 variable default_ttl_files {
-  default = 2592000 // 30 days
+  default = 0 // is there a reason to cache files bucket ever?
   description = "The ttl used by the files bucket"
 }
 variable default_ttl_function {

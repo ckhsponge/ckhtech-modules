@@ -184,7 +184,7 @@ resource "aws_cloudfront_cache_policy" "files" {
 resource "aws_cloudfront_cache_policy" "function" {
   name        = "${local.canonical_name}-function-cache-policy"
   max_ttl     = var.max_ttl
-  default_ttl = var.default_ttl_files
+  default_ttl = var.default_ttl_function
   min_ttl     = 0
   parameters_in_cache_key_and_forwarded_to_origin {
     cookies_config {
