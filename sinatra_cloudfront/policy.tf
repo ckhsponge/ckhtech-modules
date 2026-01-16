@@ -73,7 +73,7 @@ resource "aws_cloudfront_response_headers_policy" default {
     }
 
     content_security_policy {
-      content_security_policy = "frame-ancestors 'none';"
+      content_security_policy = "frame-ancestors 'self';"
       override                = false
     }
 
