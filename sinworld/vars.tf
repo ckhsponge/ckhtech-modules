@@ -172,6 +172,11 @@ variable job_queue_function_name {
   description = "this value must exist in task_names, the jobs sqs calls a lambda based on this"
 }
 
+variable websocket_function_name {
+  default = "websocket"
+  description = "this value must exist in task_names, the websocket api gateway calls a lambda based on this"
+}
+
 variable deployment_slack_webhook {
   default = ""
   description = "post deployment updates to this slack webhook"

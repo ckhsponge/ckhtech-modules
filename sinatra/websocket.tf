@@ -1,29 +1,9 @@
-resource "aws_lambda_function" "websocket" {
+
+data aws_lambda_function websocket {
+  depends_on = [aws_lambda_function.task]
   count = var.create_websocket ? 1 : 0
-  function_name = "${local.function_name}-websocket"
 
-  runtime = var.lambda_runtime
-  handler = var.websocket_handler
-
-  filename = var.lambda_filename
-  source_code_hash = var.source_code_hash
-
-  role = aws_iam_role.lambda_exec.arn
-  environment {
-    variables = local.lamda_environment_variables
-  }
-
-  memory_size = var.lambda_memory_size
-
-  lifecycle {
-    ignore_changes = [source_code_hash]
-  }
-}
-
-resource "aws_cloudwatch_log_group" "websocket" {
-  count = var.create_websocket ? 1 : 0
-  name = "/aws/lambda/${aws_lambda_function.websocket[0].function_name}"
-  retention_in_days = 30
+  function_name = var.websocket_function_name
 }
 
 resource "aws_apigatewayv2_api" "websocket" {
@@ -31,6 +11,31 @@ resource "aws_apigatewayv2_api" "websocket" {
   name = "${var.service}-websocket"
   protocol_type = "WEBSOCKET"
   route_selection_expression = "$request.body.action"
+}
+
+resource "aws_apigatewayv2_deployment" "websocket" {
+  count = var.create_websocket ? 1 : 0
+  api_id = aws_apigatewayv2_api.websocket[0].id
+
+  triggers = {
+    redeployment = sha1(join(",", tolist([
+      jsonencode(aws_apigatewayv2_integration.websocket),
+      jsonencode(aws_apigatewayv2_route.websocket_default),
+      jsonencode(aws_apigatewayv2_route_response.websocket_default),
+      jsonencode(aws_apigatewayv2_api.websocket[0].body),
+      # jsonencode(aws_apigatewayv2_authorizer.websocket[0]),
+    ])))
+  }
+
+  depends_on = [
+    aws_apigatewayv2_api.websocket,
+    aws_apigatewayv2_route.websocket_default,
+    aws_apigatewayv2_integration.websocket,
+  ]
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_apigatewayv2_stage" "websocket" {
@@ -64,9 +69,10 @@ resource "aws_cloudwatch_log_group" "websocket_api" {
 resource "aws_apigatewayv2_integration" "websocket" {
   count = var.create_websocket ? 1 : 0
   api_id = aws_apigatewayv2_api.websocket[0].id
-  integration_uri = aws_lambda_function.websocket[0].invoke_arn
+  integration_uri = data.aws_lambda_function.websocket[0].invoke_arn
   integration_type = "AWS_PROXY"
   integration_method = "POST"
+  connection_type = "INTERNET"
 }
 
 resource "aws_apigatewayv2_route" "websocket_default" {
@@ -76,11 +82,46 @@ resource "aws_apigatewayv2_route" "websocket_default" {
   target = "integrations/${aws_apigatewayv2_integration.websocket[0].id}"
 }
 
+resource "aws_apigatewayv2_route_response" "websocket_default" {
+  count = var.create_websocket ? 1 : 0
+  api_id = aws_apigatewayv2_api.websocket[0].id
+  route_id = aws_apigatewayv2_route.websocket_default[0].id
+  route_response_key = "$default"
+}
+
+resource "aws_apigatewayv2_route" "websocket_connect" {
+  count = var.create_websocket ? 1 : 0
+  api_id = aws_apigatewayv2_api.websocket[0].id
+  route_key = "$connect"
+  target = "integrations/${aws_apigatewayv2_integration.websocket[0].id}"
+}
+
+resource "aws_apigatewayv2_route_response" "websocket_connect" {
+  count = var.create_websocket ? 1 : 0
+  api_id = aws_apigatewayv2_api.websocket[0].id
+  route_id = aws_apigatewayv2_route.websocket_connect[0].id
+  route_response_key = "$default"
+}
+
+resource "aws_apigatewayv2_route" "websocket_disconnect" {
+  count = var.create_websocket ? 1 : 0
+  api_id = aws_apigatewayv2_api.websocket[0].id
+  route_key = "$disconnect"
+  target = "integrations/${aws_apigatewayv2_integration.websocket[0].id}"
+}
+
+resource "aws_apigatewayv2_route_response" "websocket_disconnect" {
+  count = var.create_websocket ? 1 : 0
+  api_id = aws_apigatewayv2_api.websocket[0].id
+  route_id = aws_apigatewayv2_route.websocket_disconnect[0].id
+  route_response_key = "$default"
+}
+
 resource "aws_lambda_permission" "websocket" {
   count = var.create_websocket ? 1 : 0
   statement_id = "AllowExecutionFromAPIGateway"
   action = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.websocket[0].function_name
+  function_name = var.websocket_function_name
   principal = "apigateway.amazonaws.com"
   source_arn = "${aws_apigatewayv2_api.websocket[0].execution_arn}/*/*"
 }

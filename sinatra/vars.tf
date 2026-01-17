@@ -87,5 +87,9 @@ variable create_websocket {
   default = false
 }
 variable websocket_handler {
-  default = "sinatra_handler.SinatraHandler.handle"
+  default = "websocket_handler.WebsocketHandler.handle"
+}
+variable websocket_function_name {
+  default = "websocket"
+  description = "this value must exist in task_names, the websocket api gateway calls a lambda based on this"
 }
