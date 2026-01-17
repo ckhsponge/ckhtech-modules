@@ -1,11 +1,4 @@
 
-data aws_lambda_function websocket {
-  depends_on = [aws_lambda_function.task]
-  count = var.create_websocket ? 1 : 0
-
-  function_name = var.websocket_function_name
-}
-
 resource "aws_apigatewayv2_api" "websocket" {
   count = var.create_websocket ? 1 : 0
   name = "${var.service}-websocket"
@@ -69,7 +62,7 @@ resource "aws_cloudwatch_log_group" "websocket_api" {
 resource "aws_apigatewayv2_integration" "websocket" {
   count = var.create_websocket ? 1 : 0
   api_id = aws_apigatewayv2_api.websocket[0].id
-  integration_uri = data.aws_lambda_function.websocket[0].invoke_arn
+  integration_uri = "arn:aws:apigateway:${var.aws_region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.aws_region}:${data.aws_caller_identity.current.account_id}:function:${var.websocket_function_name}/invocations"
   integration_type = "AWS_PROXY"
   integration_method = "POST"
   connection_type = "INTERNET"
