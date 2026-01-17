@@ -20,6 +20,7 @@ variable create_files_resizer_cloudfront {
 }
 variable create_deployment_pipeline { default = false }
 variable create_job_queue   { default = false }
+variable create_websocket { default = false }
 
 variable domain_base {
   default = ""

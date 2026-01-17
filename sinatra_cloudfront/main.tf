@@ -12,6 +12,7 @@ locals {
   cloudfront_origin_id_files = "${local.cloudfront_origin_id}-files"
   cloudfront_origin_id_files_group = "${local.cloudfront_origin_id}-files-group"
   cloudfront_origin_id_files_failover = "${local.cloudfront_origin_id}-files-failover"
+  cloudfront_origin_id_websocket = "${local.cloudfront_origin_id}-websocket"
 }
 
 resource "random_string" "origin_id" {
@@ -175,6 +176,35 @@ resource "aws_cloudfront_distribution" "main" {
       compress = var.compress
       response_headers_policy_id = aws_cloudfront_response_headers_policy.main.id
       cache_policy_id            = aws_cloudfront_cache_policy.files.id
+    }
+  }
+
+  dynamic origin {
+    for_each = var.has_websocket ? [0] : []
+    content {
+      domain_name = var.websocket_domain_name
+      origin_id = local.cloudfront_origin_id_websocket
+      custom_origin_config {
+        http_port = 80
+        https_port = 443
+        origin_ssl_protocols = ["TLSv1.2"]
+        origin_protocol_policy = "https-only"
+      }
+    }
+  }
+
+  dynamic ordered_cache_behavior {
+    for_each = var.has_websocket ? [0] : []
+    content {
+      allowed_methods = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
+      cached_methods = ["GET", "HEAD"]
+      path_pattern = "/cable*"
+      target_origin_id = local.cloudfront_origin_id_websocket
+      viewer_protocol_policy = "redirect-to-https"
+      compress = false
+      response_headers_policy_id = aws_cloudfront_response_headers_policy.default.id
+      cache_policy_id = aws_cloudfront_cache_policy.websocket[0].id
+      origin_request_policy_id = aws_cloudfront_origin_request_policy.websocket[0].id
     }
   }
 

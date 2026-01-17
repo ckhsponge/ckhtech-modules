@@ -83,3 +83,9 @@ variable cloudfront_additional_headers {
   description = "Hyphenated headers e.g. X-SLACK-SIGNATURE"
   default = []
 }
+variable create_websocket {
+  default = false
+}
+variable websocket_handler {
+  default = "sinatra_handler.SinatraHandler.handle"
+}

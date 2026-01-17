@@ -25,4 +25,7 @@ module "cloudfront" {
   has_files_failover            = var.has_files_failover
   files_failover_domain_name    = var.failover_lambda_invoke_domain_name
   additional_headers            = var.cloudfront_additional_headers
+
+  has_websocket = var.create_websocket
+  websocket_domain_name = var.create_websocket ? replace(replace(aws_apigatewayv2_stage.websocket[0].invoke_url, "wss://", ""), "/cable", "") : ""
 }

@@ -170,3 +170,9 @@ variable strict_transport_security_preload {
 variable additional_headers {
   default = []
 }
+variable has_websocket {
+  default = false
+}
+variable websocket_domain_name {
+  default = ""
+}
