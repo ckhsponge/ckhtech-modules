@@ -1,0 +1,1 @@
+# This file is intentionally empty - resources have been split into separate files

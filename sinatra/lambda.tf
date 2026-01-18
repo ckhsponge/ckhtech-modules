@@ -4,8 +4,13 @@ locals {
   lamda_environment_variables = merge(
     var.environment_variables,
     var.create_websocket ? {
-      WEBSOCKET_ENDPOINT = "https://${aws_apigatewayv2_api.websocket[0].id}.execute-api.${var.aws_region}.amazonaws.com/${aws_apigatewayv2_stage.websocket[0].name}"
+      WEBSOCKET_ENDPOINT = module.websocket[0].websocket_endpoint
     } : {}
+  )
+
+  additional_lambda_policy_arns = concat(
+    var.additional_lambda_policy_arns,
+      var.create_websocket ? [module.websocket[0].manage_connections_policy_arn] : []
   )
 }
 
@@ -55,29 +60,6 @@ resource "aws_iam_role" "lambda_exec" {
 resource "aws_iam_role_policy_attachment" "lambda_policy" {
   role       = aws_iam_role.lambda_exec.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-}
-
-locals {
-  additional_lambda_policy_arns = concat(
-    var.additional_lambda_policy_arns,
-    var.create_websocket ? [aws_iam_policy.websocket_manage_connections[0].arn] : []
-  )
-}
-
-resource "aws_iam_policy" "websocket_manage_connections" {
-  count = var.create_websocket ? 1 : 0
-  name = "${var.service}-websocket-manage-connections"
-  
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = "execute-api:ManageConnections"
-        Resource = "${aws_apigatewayv2_api.websocket[0].execution_arn}/*/*"
-      }
-    ]
-  })
 }
 
 resource "aws_iam_role_policy_attachment" "additional" {
