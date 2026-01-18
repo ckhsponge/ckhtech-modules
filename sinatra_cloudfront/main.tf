@@ -198,7 +198,7 @@ resource "aws_cloudfront_distribution" "main" {
     content {
       allowed_methods = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
       cached_methods = ["GET", "HEAD"]
-      path_pattern = "/cable*"
+      path_pattern = "/${var.websocket_stage_name}"
       target_origin_id = local.cloudfront_origin_id_websocket
       viewer_protocol_policy = "redirect-to-https"
       compress = false

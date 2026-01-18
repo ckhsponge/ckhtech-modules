@@ -176,3 +176,6 @@ variable has_websocket {
 variable websocket_domain_name {
   default = ""
 }
+variable websocket_stage_name {
+  default = "/"
+}
