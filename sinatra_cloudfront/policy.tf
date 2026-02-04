@@ -21,8 +21,13 @@ resource "aws_cloudfront_response_headers_policy" main {
     }
 
     frame_options {
-      override     = true
-      frame_option = "DENY"
+      override     = false
+      frame_option = "SAMEORIGIN"
+    }
+
+    content_security_policy {
+      content_security_policy = "frame-ancestors 'self';"
+      override                = false
     }
 
     referrer_policy {
