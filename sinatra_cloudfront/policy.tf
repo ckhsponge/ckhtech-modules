@@ -4,7 +4,10 @@ resource "aws_cloudfront_response_headers_policy" main {
   cors_config {
     access_control_allow_credentials = false
     access_control_allow_headers {
-      items = ["Location", "Access-Control-Allow-Origin"]
+      items = ["*"]
+    }
+    access_control_expose_headers {
+      items = ["*"]
     }
     access_control_allow_methods {
       items = local.allowed_methods
@@ -12,7 +15,8 @@ resource "aws_cloudfront_response_headers_policy" main {
     access_control_allow_origins {
       items = var.cors_origins
     }
-    origin_override = true
+    access_control_max_age_sec = 600
+    origin_override = false
   }
 
   security_headers_config {
@@ -56,7 +60,10 @@ resource "aws_cloudfront_response_headers_policy" default {
   cors_config {
     access_control_allow_credentials = false
     access_control_allow_headers {
-      items = ["Location", "Access-Control-Allow-Origin"]
+      items = ["*"]
+    }
+    access_control_expose_headers {
+      items = ["*"]
     }
     access_control_allow_methods {
       items = local.allowed_methods
@@ -64,7 +71,8 @@ resource "aws_cloudfront_response_headers_policy" default {
     access_control_allow_origins {
       items = var.cors_origins
     }
-    origin_override = true
+    access_control_max_age_sec = 600
+    origin_override = false
   }
 
   security_headers_config {
