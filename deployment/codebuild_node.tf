@@ -47,7 +47,7 @@ resource "aws_codebuild_project" "node" {
 
   environment {
     compute_type = "BUILD_LAMBDA_4GB" # 4GB builds 5x faster than 2GB so the double price saves you money!!!
-    image        = "aws/codebuild/amazonlinux-x86_64-lambda-standard:nodejs20"
+    image        = "aws/codebuild/amazonlinux-x86_64-lambda-standard:nodejs24"
     type         = "LINUX_LAMBDA_CONTAINER"
     environment_variable {
       name  = "AWS_REGION"
