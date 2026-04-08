@@ -100,6 +100,7 @@ module sinatra {
   cloudfront_additional_headers = var.cloudfront_additional_headers
   create_websocket = var.create_websocket
   websocket_function_name = var.websocket_function_name
+  response_page_path_404 = var.response_page_path_404
 }
 
 resource "random_password" "activerecord_encryption" {

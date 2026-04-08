@@ -53,10 +53,13 @@ resource "aws_cloudfront_distribution" "main" {
     }
   }
 
-  custom_error_response {
-    error_code = "404"
-    response_code = var.response_code_404 # instead of returning 404 return this code
-    response_page_path = var.response_page_path_404
+  dynamic "custom_error_response" {
+    for_each = length(var.response_page_path_404) > 0 ? [1] : []
+    content {
+      error_code = "404"
+      response_code = var.response_code_404 # instead of returning 404 return this code
+      response_page_path = var.response_page_path_404
+    }
   }
 
   enabled             = true

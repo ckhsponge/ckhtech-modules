@@ -222,3 +222,7 @@ variable cloudfront_additional_headers {
   type = list(string)
   default = []
 }
+
+variable response_page_path_404 {
+  default = "/error.html"
+}

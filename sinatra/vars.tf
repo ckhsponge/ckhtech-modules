@@ -93,3 +93,7 @@ variable websocket_function_name {
   default = "websocket"
   description = "this value must exist in task_names, the websocket api gateway calls a lambda based on this"
 }
+
+variable response_page_path_404 {
+  default = "/error.html"
+}

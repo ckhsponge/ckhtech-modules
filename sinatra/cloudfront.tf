@@ -29,4 +29,5 @@ module "cloudfront" {
   has_websocket = var.create_websocket
   websocket_domain_name = var.create_websocket ? replace(replace(module.websocket[0].stage_invoke_url, "wss://", ""), "/${module.websocket[0].stage_name}", "") : ""
   websocket_stage_name = var.create_websocket ? module.websocket[0].stage_name : "/"
+  response_page_path_404 = var.response_page_path_404
 }
