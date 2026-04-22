@@ -1,7 +1,7 @@
 locals {
   slack_template         = "curl -X POST -H 'Content-type: application/json' --data '{\"text\":\"$${message}\"}' ${var.slack_webhook}"
   slack_commands_combine = length(var.slack_webhook) > 0 ? [templatestring(local.slack_template, { message = "DEPLOY COMPLETE ${local.canonical_name} *${var.environment}*" })] : []
-  lambda_update_command = join(" & ", [for name in var.lambda_function_names : "aws lambda update-function-code --function-name ${name} --zip-file fileb://\"app.zip\" --no-cli-pager"])
+  lambda_update_command = join(" & ", [for name in var.lambda_function_names : "(echo 'Updating ${name}...' && aws lambda update-function-code --function-name ${name} --zip-file fileb://\"app.zip\" --no-cli-pager --query 'FunctionName' --output text && echo 'Done ${name}') "])
   buildspec_combine = {
     version = "0.2"
 
