@@ -29,6 +29,7 @@ resource "aws_lambda_function" "sinatra" {
   }
 
   memory_size = var.lambda_memory_size
+  timeout = 10
 
   lifecycle {
     ignore_changes = [source_code_hash] # update code using CLI or other method
