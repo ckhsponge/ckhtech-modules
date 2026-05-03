@@ -61,3 +61,7 @@ output email {
 output deployment_input_bucket_name {
   value = length(module.deployment_pipeline) > 0 ? module.deployment_pipeline[0].input_bucket_name : ""
 }
+
+output files_bucket_name {
+  value = length(module.files_bucket) > 0 ? module.files_bucket[0].bucket_name : ""
+}
