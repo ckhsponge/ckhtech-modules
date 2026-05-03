@@ -65,4 +65,30 @@ data "aws_iam_policy_document" "s3_policy" {
       }
     }
   }
+
+  dynamic statement {
+    for_each = var.extra_path_arns
+    content {
+      actions = [
+        "s3:GetObject",
+        "s3:GetObjectTagging",
+        "s3:ListBucket"
+      ]
+      resources = [
+        "${local.bucket_arn}/${trimprefix(statement.value.path, "/")}/*",
+        local.bucket_arn
+      ]
+
+      principals {
+        identifiers = ["cloudfront.amazonaws.com"]
+        type        = "Service"
+      }
+
+      condition {
+        test     = "StringEquals"
+        values   = [statement.value.cloudfront_arn]
+        variable = "AWS:SourceArn"
+      }
+    }
+  }
 }

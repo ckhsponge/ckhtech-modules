@@ -42,5 +42,6 @@ module files_bucket_encryption {
     [module.sinatra.cloudfront_distribution_arn],
     length(module.resizer) > 0 ? [module.resizer[0].cloudfront_distribution_arn] : []
   ))
-  encrypt_bucket = var.encrypt_buckets
+  encrypt_bucket               = var.encrypt_buckets
+  extra_path_arns              = var.additional_files_bucket_access
 }

@@ -226,3 +226,12 @@ variable cloudfront_additional_headers {
 variable response_page_path_404 {
   default = "/error.html"
 }
+
+variable additional_files_bucket_access {
+  description = "Additional path/CloudFront ARN pairs granting read access to a specific path prefix in the files bucket."
+  type = list(object({
+    path           = string
+    cloudfront_arn = string
+  }))
+  default = []
+}

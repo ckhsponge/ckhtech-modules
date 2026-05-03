@@ -20,3 +20,12 @@ variable encrypt_bucket {
 variable encrypt_with_custom_kms {
   default = false
 }
+
+variable "extra_path_arns" {
+  description = "Additional path/CloudFront ARN pairs that get read access to a specific path prefix in the bucket."
+  default     = []
+  type = list(object({
+    path             = string
+    cloudfront_arn   = string
+  }))
+}
