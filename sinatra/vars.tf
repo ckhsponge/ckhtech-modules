@@ -31,6 +31,7 @@ variable static_bucket_regional_domain_name {
 }
 variable has_files_bucket {
   default = false
+  description = "files bucket should be attached to CDN for limited public access"
 }
 variable files_bucket_name {
   default = ""

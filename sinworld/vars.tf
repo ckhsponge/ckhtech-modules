@@ -159,7 +159,7 @@ variable dsql_backup_schedule {
 
 variable files_bucket_public_path {
   default = ""
-  description = "set this to 'files' or another path to expose that directory publicly through cloudfront"
+  description = "set this to 'files' or another path to expose that directory publicly through cloudfront, blank means no public exposure"
 }
 
 variable deployment_s3_access_principals {
