@@ -264,7 +264,7 @@ resource "aws_cloudfront_origin_access_control" "alternate" {
 }
 
 resource "aws_cloudfront_origin_access_control" "files" {
-  count = 1 //var.has_files_bucket ? 1 : 0
+  count = var.has_files_bucket ? 1 : 0
   name                              = "access-control-${var.host_name}-files"
   description                       = "Access Control ${var.host_name} files"
   origin_access_control_origin_type = "s3"
