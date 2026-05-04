@@ -30,6 +30,10 @@ locals {
 }
 
 resource "aws_cloudfront_distribution" "main" {
+  lifecycle {
+    create_before_destroy = true
+  }
+
   tags = {
     name = local.canonical_name
   }
@@ -240,6 +244,10 @@ resource "aws_cloudfront_origin_access_control" "main" {
   origin_access_control_origin_type = "s3"
   signing_behavior                  = "always"
   signing_protocol                  = "sigv4"
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_cloudfront_origin_access_control" "alternate" {
@@ -249,13 +257,21 @@ resource "aws_cloudfront_origin_access_control" "alternate" {
   origin_access_control_origin_type = "s3"
   signing_behavior                  = "always"
   signing_protocol                  = "sigv4"
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_cloudfront_origin_access_control" "files" {
-  count = var.has_files_bucket ? 1 : 0
+  count = 1 //var.has_files_bucket ? 1 : 0
   name                              = "access-control-${var.host_name}-files"
   description                       = "Access Control ${var.host_name} files"
   origin_access_control_origin_type = "s3"
   signing_behavior                  = "always"
   signing_protocol                  = "sigv4"
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
