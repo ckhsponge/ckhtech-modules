@@ -2,22 +2,18 @@ locals {
   slack_template         = "curl -X POST -H 'Content-type: application/json' --data '{\"text\":\"$${message}\"}' ${var.slack_webhook}"
   slack_commands_combine = length(var.slack_webhook) > 0 ? [templatestring(local.slack_template, { message = "DEPLOY COMPLETE ${local.canonical_name} *${var.environment}*" })] : []
   lambda_update_command = join("; ", [
-    "update_lambda() { echo \"Updating $${1}...\"; aws lambda update-function-code --function-name \"$${1}\" --zip-file fileb://\"app.zip\" --no-cli-pager --query 'FunctionName' --output text && echo \"Done $${1}\" || { echo \"FAILED $${1}\"; return 1; }; }",
+    "update_lambda() { local name=$${1} log=/tmp/lambda_$${1}.log; echo \"Updating $${name}...\" | tee $${log}; aws lambda update-function-code --function-name \"$${name}\" --zip-file fileb://\"app.zip\" --no-cli-pager --query 'FunctionName' --output text >> $${log} 2>&1 && echo \"Done $${name}\" >> $${log} || { echo \"FAILED $${name}\" >> $${log}; return 1; }; }",
     "pids=()",
-    "${join("; ", [for name in var.lambda_function_names : "update_lambda '${name}' & pids+=($${!})"])}",
+    "${join("; ", [for name in var.lambda_function_names : "update_lambda '${name}' > /tmp/lambda_${name}.log 2>&1 & pids+=($${!})"])}",
     "failed=0",
     "for pid in $${pids[@]}; do wait $${pid} || failed=1; done",
+    "for name in ${join(" ", [for name in var.lambda_function_names : "'${name}'"])}; do cat /tmp/lambda_$${name}.log 2>/dev/null; done",
     "[ $${failed} -eq 0 ]"
   ])
   buildspec_combine = {
     version = "0.2"
 
     phases = {
-      install = {
-        runtime-versions = {
-          ruby = "3.4.2"
-        }
-      }
       build = {
         # combine node build into public/static
         # zip files minus public/
@@ -53,7 +49,8 @@ locals {
 resource "aws_codebuild_project" "combine" {
   count         = 1
   name          = "${local.canonical_name}-combine"
-  build_timeout = 5
+  build_timeout   = 15
+  queued_timeout  = 30
 
   source {
     type = "NO_SOURCE"
@@ -61,9 +58,10 @@ resource "aws_codebuild_project" "combine" {
   }
 
   environment {
-    compute_type = "BUILD_LAMBDA_1GB"
-    image        = "aws/codebuild/amazonlinux-x86_64-lambda-standard:ruby3.4"
-    type         = "LINUX_LAMBDA_CONTAINER"
+    compute_type = "BUILD_GENERAL1_SMALL"
+    image        = "aws/codebuild/amazonlinux-x86_64-standard:6.0"
+    type         = "LINUX_CONTAINER"
+    // host_kernel    = "LINUX_KERNEL_LATEST" // NOT YET SUPPORTED :(
     environment_variable {
       name  = "AWS_REGION"
       value = var.aws_region
