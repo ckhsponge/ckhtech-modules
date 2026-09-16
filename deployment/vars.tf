@@ -49,7 +49,6 @@ variable build_commands_ruby {
     "bundle config set --local without development",
     "bundle install",
     "bundle list",
-    "bundle info activerecord-dsql-adapter",
     "cd .."
   ]
 }
