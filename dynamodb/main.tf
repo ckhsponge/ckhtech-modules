@@ -74,7 +74,7 @@ resource aws_dynamodb_table main {
   range_key        = var.range_key
   billing_mode     = "PAY_PER_REQUEST"
   stream_enabled   = length(var.replica_regions) > 0
-  stream_view_type = "NEW_AND_OLD_IMAGES"
+  stream_view_type = length(var.replica_regions) > 0 ? "NEW_AND_OLD_IMAGES" : null
 
   deletion_protection_enabled = var.deletion_protection
 
@@ -90,11 +90,17 @@ resource aws_dynamodb_table main {
     for_each = local.global_secondary_indexes
     content {
       name            = global_secondary_index.value.name
-      hash_key        = global_secondary_index.value.hash_key
-      range_key       = global_secondary_index.value.range_key
       projection_type = "ALL"
       read_capacity   = 0
       write_capacity  = 0
+      key_schema {
+        attribute_name = global_secondary_index.value.hash_key
+        key_type       = "HASH"
+      }
+      key_schema {
+        attribute_name = global_secondary_index.value.range_key
+        key_type       = "RANGE"
+      }
     }
   }
 
