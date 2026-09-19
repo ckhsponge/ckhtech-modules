@@ -11,7 +11,7 @@ data aws_iam_policy_document cloudwatch_put_metric_data {
 }
 
 resource "aws_iam_policy" "cloudwatch_put_metric_data_policy" {
-  name        = "cloudwatch-put-metric-data-policy"
+  name        = "${var.namespace}-cloudwatch-put-metric-data-policy"
   description = "Policy to allow CloudWatch PutMetricData"
 
   policy = data.aws_iam_policy_document.cloudwatch_put_metric_data.json
