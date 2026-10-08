@@ -74,7 +74,7 @@ resource "aws_codebuild_project" "ruby" {
 
 }
 resource "aws_iam_role_policy_attachment" "ruby_build_policies" {
-  for_each   = toset(var.build_policy_arns)
+  count      = length(var.build_policy_arns) # count is better than for-each because we might not know value yet
   role       = aws_iam_role.codebuild_role.name
-  policy_arn = each.value
+  policy_arn = var.build_policy_arns[count.index]
 }
