@@ -3,6 +3,7 @@ data aws_caller_identity main {}
 data "aws_partition" "current" {}
 
 data aws_s3_bucket static {
+  count  = length(var.static_bucket_name) > 0 ? 1 : 0
   bucket = var.static_bucket_name
 }
 
@@ -11,7 +12,7 @@ locals {
   bucket_iam_resources = concat(
     [module.codepipline_bucket.bucket_arn, "${module.codepipline_bucket.bucket_arn}/*"],
       length(module.input_bucket) > 0 ? [module.input_bucket[0].bucket_arn, "${module.input_bucket[0].bucket_arn}/*"] : [],
-      length(var.static_bucket_name) > 0 ? [data.aws_s3_bucket.static.arn, "${data.aws_s3_bucket.static.arn}/*"] : [],
+      length(data.aws_s3_bucket.static) > 0 ? [data.aws_s3_bucket.static[0].arn, "${data.aws_s3_bucket.static[0].arn}/*"] : [],
   )
 }
 
