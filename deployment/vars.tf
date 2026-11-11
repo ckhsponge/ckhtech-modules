@@ -54,6 +54,8 @@ variable build_commands_ruby {
         fi
         rbenv local "$ruby_version"
         sed -i -E "s/^ruby ['\"][^'\"]+['\"]/ruby '$ruby_version'/" Gemfile
+        # Refresh the locked Ruby version before enabling frozen deployment mode.
+        BUNDLE_IGNORE_CONFIG=true BUNDLE_DEPLOYMENT=false BUNDLE_FROZEN=false BUNDLE_PATH=vendor/bundle BUNDLE_WITHOUT=development bundle update --ruby
       fi
     EOT
     ,
